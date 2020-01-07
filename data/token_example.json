@@ -1,0 +1,21 @@
+{
+    "telegram": {
+        "token": "insert telegram bot token here",
+        "devid": 000000000,
+        "devusername": "@username"
+    },
+    "acr": {
+        "clear": {
+            "access_key": "insert ACRCloud Project access key",
+            "access_secret": "insert ACRCloud Project access secret"
+        },
+        "noisy": {
+            "access_key": "insert ACRCloud Project 2 access key",
+            "access_secret": "insert ACRCloud Project 2 access secret"
+        },
+        "hum": {
+            "access_key": "insert ACRCloud Project 3 access key",
+            "access_secret": "insert ACRCloud Project 3 access secret"
+        }
+    }
+}
