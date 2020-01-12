@@ -2,7 +2,7 @@ import telegram, json, time, os
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, MessageQueue
 
 
-ver='0.2.2'
+ver='0.2.2.1.4'
 botName=f'SongID'
 botVer=f'{botName} {ver}'
 botAt=f'@SongIDBot'
@@ -48,9 +48,19 @@ def logusr(update):
     logger.info(f'[@{update.effective_chat.username}][{update.effective_chat.first_name} {update.effective_chat.last_name}][U:{update.effective_chat.id}][M:{update.effective_message.message_id}]: {update.message.text}')
 
 
-# Send a message to the user and log the message (debugging)
+# Send a message to the user
 def botsend(update, context, msg):
-    context.bot.send_message(chat_id=update.effective_chat.id, text=str(msg)+f'\n\n<i>{botAt} <code>{ver}</code></i>', parse_mode=telegram.ParseMode.HTML)
+    update.message.reply_text(str(msg)+f'\n\n<i>{botAt} <code>{ver}</code></i>', parse_mode=telegram.ParseMode.HTML)
+
+
+# Send a message to the user and log the message
+def logbotsend(update, context, msg):
+    update.message.reply_text(str(msg)+f'\n\n<i>{botAt} <code>{ver}</code></i>', parse_mode=telegram.ParseMode.HTML)
+    logger.info(f'[@{botUsername}][{botName}][M:{update.effective_message.message_id}]: {msg}')
+
+
+# Log a message the bot has sent anonymously
+def logbot(update, msg):
     logger.info(f'[@{botUsername}][{botName}][M:{update.effective_message.message_id}]: {msg}')
 
 

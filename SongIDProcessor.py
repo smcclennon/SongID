@@ -25,7 +25,7 @@ def timeLeft(update):
     logger.debug('timeLeft(1/2)')
     dur_since_last_call = round(time.time()) - int(last_call)
     logger.debug('timeLeft(2/2)')
-    return int(5 - round(dur_since_last_call))
+    return int(2 - round(dur_since_last_call))
 
 
 # Return whether the user has surpassed their API cooldown or not
@@ -72,12 +72,13 @@ def fileDownload(update, context):
             file_id = update.effective_message.voice.file_id
             break
         except:
-            botsend(update, context, f'Sorry, we don\'t support that filetype.')
+            logbotsend(update, context, f'⚠️ Sorry, we don\'t support that filetype.')
         break
     try:
         file_info = context.bot.get_file(file_id)
     except:
-        botsend(update, context, f'Sorry, your file is too big for us to process.\nFile size limit: 20MB')
+        botsend(update, context, f'⚠️ Sorry, your file is too big for us to process.\nFile size limit: 20MB')
+        logbot(update, '*Sent file-size limit error*')
     file_size = file_info["file_size"]
     if 20000000 - int(file_size) >= 0:
         web_path = file_info["file_path"]  # Get the original filename
@@ -167,6 +168,8 @@ def dataProcess(update, context, data):
         if deezer != None:
             response=response+f'\nDeezer: {deezer}'
         botsend(update, context, response)  # Send the respective user this information
+        logbot(update, '*Sent song information*')
+        context.bot.send_message(devid, f'User @{update.effective_user.username} identified a song!')
 
     else:  # If no match was found by ACRCloud
         logger.info('ACR: Failed to find a match')
@@ -178,6 +181,8 @@ def dataProcess(update, context, data):
 Tips for a higher chance of matching:
 - When recording with the Telegram Voice Recorder, try to record for at least 10 seconds, preferably during the chorus of a song where it's most iconic.
 - When uploading a file, try to make sure the audio quality is the best you have accessible.''')
+        logbot(update, 'No Match :(')
+        context.bot.send_message(devid, f'User @{update.effective_user.username} couldn\'t find a match')
 
 
 
@@ -195,7 +200,7 @@ class SIDProcessor():
 
     # Add user data to the 'userdata' variable and save it to disk
     def addUserData(update, apiCalls, lastCall):
-        userdata[f'{update.effective_user.id}'] = {'username': f'{update.effective_user.username}', 'name': f'{update.effective_user.first_name} {update.effective_user.last_name}', 'api_calls': f'{apiCalls}', 'last_call': f'{lastCall}'}
+        userdata[f'{update.effective_user.id}'] = {'username': f'{update.effective_chat.username}', 'name': f'{update.effective_user.first_name} {update.effective_user.last_name}', 'api_calls': f'{apiCalls}', 'last_call': f'{lastCall}'}
         logger.info(f'User data added/updated: [{update.effective_user.id}: {update.effective_user.username}, {update.effective_user.first_name} {update.effective_user.last_name}, {apiCalls}, {lastCall}]')
         saveUserData()
 
@@ -213,7 +218,16 @@ class SIDProcessor():
     # If authorised, download the users uploaded file and send it to the API response processor, and then delete the downloaded file from disk
     def fileProcess(update, context, processor):
         logusr(update)
-        context.bot.sendChatAction(chat_id=update.effective_chat.id, action=telegram.ChatAction.TYPING, timeout=20)
+        for attempt in range(0,10):
+            try:
+                logger.info('trying to send typing (encrypt)')
+                context.bot.sendChatAction(chat_id=update.effective_chat.id, action=telegram.ChatAction.TYPING, timeout=10)
+                logger.info('successfully sent typing action')
+            except:
+                logger.info('typing send exception, continue')
+                continue
+            logger.info('breaking from typing for loop')
+            break
         if authorised(update):
             context.bot.sendChatAction(chat_id=update.effective_chat.id, action=telegram.ChatAction.RECORD_AUDIO, timeout=20)
             fileName = fileDownload(update, context)
@@ -233,4 +247,41 @@ class SIDProcessor():
                 time_msg = f'{timeLeft_int} second'
             else:
                 time_msg = f'{timeLeft_int} seconds'
-            botsend(update, context, f'Please wait {time_msg} before making another request')
+            logbotsend(update, context, f'Please wait {time_msg} before making another request')
+
+    # Split the command arguments into an array
+    def commandArgs(update, context):
+        whitespace=[]
+        keysplit=1
+        msgsplit=2
+        command = update.message.text
+        split = command.split(' ')  # Split the message with each space
+        if len(split) < 3:
+            return None
+        if len(split) >= 3:
+            key = split[1]
+            while key == "":  # If the user used irregular spacing
+                keysplit+=1
+                whitespace.append(keysplit-1)
+                key = split[keysplit]
+
+            message = command
+            for space in whitespace:
+                message = message.replace(split[space], '', 1)
+            message = message.replace(split[0]+' ', '', 1)
+            message = message.replace(split[keysplit]+' ', '', 1)
+
+            if len(message) > 5000:
+                return ['too_long', len(message)-5000]
+            return [key, message]
+
+
+    # Find the parent key(s) within a dictionary
+    def find_key(d, value):  # https://stackoverflow.com/a/15210253
+        for k,v in d.items():
+            if isinstance(v, dict):
+                p = SIDProcessor.find_key(v, value)
+                if p:
+                    return [k] + p
+            elif v == value:
+                return [k]
