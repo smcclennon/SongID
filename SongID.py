@@ -5,8 +5,7 @@ from SongIDProcessor import SIDProcessor
 from SongIDCore import *
 from telegram import ParseMode
 from telegram.utils.helpers import mention_html
-import sys
-import traceback
+import sys, traceback
 from threading import Thread
 
 
@@ -63,13 +62,13 @@ def stop_and_restart():
     os.execl(sys.executable, sys.executable, *sys.argv)
 
 
-# What to do when the developer sends the '/r' command
+# Respond when the developer sends the '/r' command
 def restart(update, context):
     update.message.reply_text(f'{botName} is restarting...')
     Thread(target=stop_and_restart).start()
 
 
-# What to do when the developer sends the '/send' command
+# Send a message to a specific user
 def sendMsg(update, context):
     logusr(update)
     processed = SIDProcessor.commandArgs(update, context)
@@ -89,7 +88,7 @@ def sendMsg(update, context):
         logbotsend(update, context, 'Message sent!')
 
 
-# What to do when the user sends the '/start' command
+# Respond when the user sends the '/start' command
 # (When the user adds a telegram bot, they are forced to send '/start')
 def startCMD(update, context):
     logusr(update)
@@ -109,7 +108,7 @@ To get started, upload a file or record a Telegram Audio Message''')
     logbot(update, '*Sent \'/start\' response*')
 
 
-# What to do when the user sends an unknown command
+# Respond when the user sends an unknown command
 def unknownCMD(update, context):
     logusr(update)
     logbotsend(update, context, "Sorry, I didn't understand that command.")

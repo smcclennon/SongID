@@ -2,12 +2,11 @@ import telegram, json, time, os
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, MessageQueue
 
 
-ver='0.2.2.1.4'
+ver='0.2.2.1.5'
 botName=f'SongID'
 botVer=f'{botName} {ver}'
 botAt=f'@SongIDBot'
 botUsername='SongIDbot'
-userdataDIR='data/userdata.json'
 downloadDIR='data/downloads'
 
 
@@ -30,14 +29,14 @@ with open('data/token.json', 'r') as f:
     devusername = telegramConfig["devusername"]
 
 
-# Load saved user-data (user ID, username, full name, api calls, last api call)
-with open(userdataDIR) as f:
+# Load data/userdata.json into the variable 'userdata'
+with open('data/userdata.json') as f:
     userdata = json.load(f)
 
 
 
 
- #  Initialise the required telegram bot data
+#  Initialise the required telegram bot data
 u=Updater(token=token, use_context=True)
 dp = u.dispatcher
 
@@ -53,7 +52,7 @@ def botsend(update, context, msg):
     update.message.reply_text(str(msg)+f'\n\n<i>{botAt} <code>{ver}</code></i>', parse_mode=telegram.ParseMode.HTML)
 
 
-# Send a message to the user and log the message
+# Send a message to the user and log the message sent
 def logbotsend(update, context, msg):
     update.message.reply_text(str(msg)+f'\n\n<i>{botAt} <code>{ver}</code></i>', parse_mode=telegram.ParseMode.HTML)
     logger.info(f'[@{botUsername}][{botName}][M:{update.effective_message.message_id}]: {msg}')

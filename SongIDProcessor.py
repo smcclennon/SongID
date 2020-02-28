@@ -4,9 +4,9 @@ from SongIDCore import *
 
 
 
-# Save user data from the "userdata" variable into the userdata json file
+# Save user data from the "userdata" variable contents to data/userdata.json
 def saveUserData():
-    with open(userdataDIR, 'w') as f:
+    with open('data/userdata.json', 'w') as f:
         json.dump(userdata, f)
     logger.info('User data has been saved')
 
@@ -220,13 +220,13 @@ class SIDProcessor():
         logusr(update)
         for attempt in range(0,10):
             try:
-                logger.info('trying to send typing (encrypt)')
+                logger.info('fileProcess: Attempting to send ChatAction.TYPING')
                 context.bot.sendChatAction(chat_id=update.effective_chat.id, action=telegram.ChatAction.TYPING, timeout=10)
-                logger.info('successfully sent typing action')
+                logger.info('fileProcess: Successfully sent ChatAction.TYPING')
             except:
-                logger.info('typing send exception, continue')
+                logger.info('fileProcess: Failed to send ChatAction.TYPING')
                 continue
-            logger.info('breaking from typing for loop')
+            logger.info('fileProcess: Breaking from ChatAction loop')
             break
         if authorised(update):
             context.bot.sendChatAction(chat_id=update.effective_chat.id, action=telegram.ChatAction.RECORD_AUDIO, timeout=20)
