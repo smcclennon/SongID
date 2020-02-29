@@ -76,17 +76,19 @@ def fileDownload(update, context):
         break
     try:
         file_info = context.bot.get_file(file_id)
+        file_size = file_info["file_size"]
+        if 20000000 - int(file_size) >= 0:
+            web_path = file_info["file_path"]  # Get the original filename
+            extension = os.path.splitext(f'{web_path}')[1]  # Get the file extension (.mp3, .mp4 etc)
+            fileName = f'{update.effective_chat.id}_{update.effective_message.message_id}_{file_id}{extension}'
+            newFile = context.bot.get_file(file_id)
+            newFile.download(f'{downloadDIR}/{fileName}')
+            return fileName
     except:
         botsend(update, context, f'⚠️ Sorry, your file is too big for us to process.\nFile size limit: 20MB')
         logbot(update, '*Sent file-size limit error*')
-    file_size = file_info["file_size"]
-    if 20000000 - int(file_size) >= 0:
-        web_path = file_info["file_path"]  # Get the original filename
-        extension = os.path.splitext(f'{web_path}')[1]  # Get the file extension (.mp3, .mp4 etc)
-        fileName = f'{update.effective_chat.id}_{update.effective_message.message_id}_{file_id}{extension}'
-        newFile = context.bot.get_file(file_id)
-        newFile.download(f'{downloadDIR}/{fileName}')
-        return fileName
+        return 'FILE_TOO_BIG'
+
 
 
 # Process the JSON response from the ACRCloud API
@@ -231,16 +233,16 @@ class SIDProcessor():
         if authorised(update):
             context.bot.sendChatAction(chat_id=update.effective_chat.id, action=telegram.ChatAction.RECORD_AUDIO, timeout=20)
             fileName = fileDownload(update, context)
-
-            if processor == 'noisy':
-                dataProcess(update, context, ACRAPI.noisy(f'{downloadDIR}/{fileName}'))
-                os.remove(f'{downloadDIR}/{fileName}')
-            elif processor == 'clear':
-                dataProcess(update, context, ACRAPI.clear(f'{downloadDIR}/{fileName}'))
-                os.remove(f'{downloadDIR}/{fileName}')
-            elif processor == 'hum':
-                dataProcess(update, context, ACRAPI.hum(f'{downloadDIR}/{fileName}'))
-                os.remove(f'{downloadDIR}/{fileName}')
+            if fileName != 'FILE_TOO_BIG':
+                if processor == 'noisy':
+                    dataProcess(update, context, ACRAPI.noisy(f'{downloadDIR}/{fileName}'))
+                    os.remove(f'{downloadDIR}/{fileName}')
+                elif processor == 'clear':
+                    dataProcess(update, context, ACRAPI.clear(f'{downloadDIR}/{fileName}'))
+                    os.remove(f'{downloadDIR}/{fileName}')
+                elif processor == 'hum':
+                    dataProcess(update, context, ACRAPI.hum(f'{downloadDIR}/{fileName}'))
+                    os.remove(f'{downloadDIR}/{fileName}')
         else:
             timeLeft_int = timeLeft(update)
             if timeLeft_int == 1:

@@ -142,7 +142,7 @@ def mydataCMD(update, context):
     data=SIDProcessor.getUserData(update)
     user = update.effective_chat.id
     username = data["username"]
-    name = data["name"]
+    name = data["name"].replace(' None', '')
     api_calls = data["api_calls"]
     last_call = round(int(time.time()) - int(data["last_call"]))
     lc=SIDProcessor.getUserData(update)['last_call']
