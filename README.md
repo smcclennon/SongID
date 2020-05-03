@@ -9,8 +9,9 @@ Working with the [Telegram Bot API](https://core.telegram.org/api) is made signi
 - Identify music within files
 - Supports video files
 - Supports Telegram audio messages
+- Find the name, artist, album, duration and release date of an identified song
+- Find an identified song on YouTube, Spotify and Deezer
 - Deletes downloaded files as soon as they've been processed
-- Contents of generated files are completely customisable!
 
 ## Screenshots
 <img src="https://smcclennon.github.io/assets/images/screenshots/SongID/voice.png" alt="Send Voice Message" width="100%"></img><img src="https://smcclennon.github.io/assets/images/screenshots/SongID/video.png" alt="Send Video" width="100%"></img>
