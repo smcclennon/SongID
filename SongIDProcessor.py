@@ -169,10 +169,14 @@ def dataProcess(update, context, data):
             response=response+f'\nSpotify: {spotify}'
         if deezer != None:
             response=response+f'\nDeezer: {deezer}'
+        response = response + '\n\nPlease consider <a href="https://t.me/dailychannelsbot?start=songidbot">leaving us a review!</a>'
         botsend(update, context, response)  # Send the respective user this information
         logbot(update, '*Sent song information*')
         context.bot.send_message(devid, f'User @{update.effective_user.username} identified a song!')
-
+    elif data["status"]["code"] == 3003:
+        logger.info('ACR: Limit exceeded')
+        botsend(update, context, 'We\'ve hit our daily API limit. Type /limit for more info')
+        context.bot.send_message(devid, f'User @{update.effective_user.username} hit the limit')
     else:  # If no match was found by ACRCloud
         logger.info('ACR: Failed to find a match')
         botsend(update, context, '''No Match :(
@@ -234,15 +238,22 @@ class SIDProcessor():
             context.bot.sendChatAction(chat_id=update.effective_chat.id, action=telegram.ChatAction.RECORD_AUDIO, timeout=20)
             fileName = fileDownload(update, context)
             if fileName != 'FILE_TOO_BIG':
-                if processor == 'noisy':
-                    dataProcess(update, context, ACRAPI.noisy(f'{downloadDIR}/{fileName}'))
-                    os.remove(f'{downloadDIR}/{fileName}')
-                elif processor == 'clear':
-                    dataProcess(update, context, ACRAPI.clear(f'{downloadDIR}/{fileName}'))
-                    os.remove(f'{downloadDIR}/{fileName}')
-                elif processor == 'hum':
-                    dataProcess(update, context, ACRAPI.hum(f'{downloadDIR}/{fileName}'))
-                    os.remove(f'{downloadDIR}/{fileName}')
+                deleteSuccess = 0
+                while deleteSuccess != 5:
+                    try:
+                        if processor == 'noisy':
+                            dataProcess(update, context, ACRAPI.noisy(f'{downloadDIR}/{fileName}'))
+                            os.remove(f'{downloadDIR}/{fileName}')
+                        elif processor == 'clear':
+                            dataProcess(update, context, ACRAPI.clear(f'{downloadDIR}/{fileName}'))
+                            os.remove(f'{downloadDIR}/{fileName}')
+                        elif processor == 'hum':
+                            dataProcess(update, context, ACRAPI.hum(f'{downloadDIR}/{fileName}'))
+                            os.remove(f'{downloadDIR}/{fileName}')
+                        deleteSuccess = 5
+                    except:
+                        deleteSuccess+=1
+                        continue
         else:
             timeLeft_int = timeLeft(update)
             if timeLeft_int == 1:
