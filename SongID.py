@@ -25,6 +25,9 @@ def error(update, context):
         #logbot(update, '⚠️ Telegram closed the connection. Please try again.')
         logger.info('existing connection closed (error exception catch temp code), pass')
         pass
+    elif '[WinError 32] The process cannot access the file because it is being used by another process' in str(context.error):
+        logger.info('File cannot be accessed (likely deleted), being used by another process, pass')
+        pass
     else:
         if update.effective_message:
             text = "⚠️ An error occured, sorry for any inconvenience caused.\nThe developer has been notified and will look into this issue as soon as possible."
@@ -84,7 +87,7 @@ def sendMsg(update, context):
         if user[0] == '@':
             user = SIDProcessor.find_key(userdata, user[1:])[0]
 
-        context.bot.send_message(int(user), message)
+        context.bot.send_message(int(user), message, parse_mode=telegram.ParseMode.HTML)
         logbotsend(update, context, 'Message sent!')
 
 
@@ -106,6 +109,22 @@ Key Features:
 
 To get started, upload a file or record a Telegram Audio Message''')
     logbot(update, '*Sent \'/start\' response*')
+
+
+def limitCMD(update, context):
+    logusr(update)
+    botsend(update, context, '''Running SongID isn't free, and to keep costs low, we limit our daily API requests (comparing your audio to a third party music fingerprint database). 
+
+Unfortunately, we've hit that limit today, and we're sorry for any inconvenience in being unable to process your request.
+Please try again tomorrow.
+
+In the meantime, you could try using other music identification services such as "Shazam" and "Sound Hound". Unfortunately these services don't support sending videos or audio files and can only identify music with your microphone.
+
+SongID was originally created as a proof of concept, and I had no idea that it would become this popular.
+
+View SongID and my other projects here: github.com/smcclennon
+''')
+    logbot(update, '*Sent \'/limit\' response*')
 
 
 # Respond when the user sends an unknown command
@@ -180,6 +199,7 @@ dp.add_error_handler(error)  # Handle uncaught exceptions
 dp.add_handler(CommandHandler('start', startCMD))  # Respond to '/start'
 dp.add_handler(CommandHandler('mydata', mydataCMD))  # Respond to '/mydata'
 dp.add_handler(CommandHandler('help', helpCMD))  # Respond to '/help'
+dp.add_handler(CommandHandler('limit', limitCMD))  # Respond to '/limit'
 dp.add_handler(MessageHandler(Filters.text, helpCMD))  # Respond to text
 
 # Handle different types of file uploads
