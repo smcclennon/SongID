@@ -108,8 +108,8 @@ Key Features:
 <i>[20MB file size limit]</i>
 
 To get started, upload a file or record a Telegram Audio Message''')
+    context.bot.send_message(devid, f'User @{update.effective_user.username} ({update.effective_chat.id}): \'{update.message.text}\'')
     logbot(update, '*Sent \'/start\' response*')
-
 
 def limitCMD(update, context):
     logusr(update)
@@ -124,11 +124,14 @@ SongID was originally created as a proof of concept, and I had no idea that it w
 
 View SongID and my other projects here: github.com/smcclennon
 ''')
+    context.bot.send_message(devid, f'User @{update.effective_user.username} ({update.effective_chat.id}): \'{update.message.text}\'')
     logbot(update, '*Sent \'/limit\' response*')
 
 
 # Respond when the user sends an unknown command
 def unknownCMD(update, context):
+    context.bot.send_message(devid, f'User @{update.effective_user.username} ({update.effective_chat.id}): \'{update.message.text}\'')
+    context.bot.send_message(devid, f'User @{update.effective_user.username} ({update.effective_chat.id}): \'{update.message.text}\'')
     logusr(update)
     logbotsend(update, context, "Sorry, I didn't understand that command.")
 
@@ -145,6 +148,7 @@ def helpCMD(update, context):
 
 File size limit: 20MB
 If you exceed this limit, we won't be able to scan your file for music!''')
+    context.bot.send_message(devid, f'User @{update.effective_user.username} ({update.effective_chat.id}): \'{update.message.text}\'')
     logbot(update, '*Sent help information*')
 
 
@@ -152,6 +156,7 @@ If you exceed this limit, we won't be able to scan your file for music!''')
 def invalidFiletype(update, context):
     logusr(update)
     botsend(update, context, 'Sorry, we don\'t scan those types of files.\nPlease upload an <b>audio</b> or <b>video</b> file containing the music you wish to scan, or <b>record/hum</b> a <b>Telegram Voice Message</b>.\n\n<i>20MB file size limit</i>')
+    context.bot.send_message(devid, f'User @{update.effective_user.username} ({update.effective_chat.id}) sent an invalid filetype')
     logbot(update, '*Sent invalid-filetype response*')
 
 
@@ -175,6 +180,7 @@ def mydataCMD(update, context):
 
 <i>We do not store more data than we need to, and we delete your uploaded audio files as soon as we've finished processing them</i>
 ''')
+    context.bot.send_message(devid, f'User @{update.effective_user.username} ({update.effective_chat.id}): \'{update.message.text}\'')
     logbot(update, '*Sent user data*')
 
 
@@ -200,7 +206,6 @@ dp.add_handler(CommandHandler('start', startCMD))  # Respond to '/start'
 dp.add_handler(CommandHandler('mydata', mydataCMD))  # Respond to '/mydata'
 dp.add_handler(CommandHandler('help', helpCMD))  # Respond to '/help'
 dp.add_handler(CommandHandler('limit', limitCMD))  # Respond to '/limit'
-dp.add_handler(MessageHandler(Filters.text, helpCMD))  # Respond to text
 
 # Handle different types of file uploads
 dp.add_handler(MessageHandler(Filters.audio, noisyProcess))
@@ -213,6 +218,7 @@ dp.add_handler(MessageHandler(Filters.document, invalidFiletype))  # Notify user
 dp.add_handler(CommandHandler('r', restart, filters=Filters.user(username=devusername)))  # Allow the developer to restart the bot
 dp.add_handler(CommandHandler('send', sendMsg, filters=Filters.user(username=devusername)))  # Allow the developer to send messages to users
 dp.add_handler(MessageHandler(Filters.command, unknownCMD))  # Notify user of invalid command
+dp.add_handler(MessageHandler(Filters.text, helpCMD))  # Respond to text
 logger.info('Loaded: Handlers')
 
 
