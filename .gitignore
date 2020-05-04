@@ -3,3 +3,4 @@ __pycache__
 *.psd
 token.json
 userdata.json
+data/downloads
