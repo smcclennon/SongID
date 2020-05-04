@@ -147,36 +147,41 @@ def dataProcess(update, context, data):
             pass
         # Rank the track match based off of it's match %
         if score == 100:
-            response=f'Perfect Match: <b>{score}%</b>'
-        elif score >=90:
-            response=f'Good Match: <b>{score}%</b>'
-        elif score >=80:
-            response=f'Likely Match: <b>{score}%</b>'
-        elif score >=70:
-            response=f'Possible Match: <b>{score}%</b>'
+            response = f'Perfect Match: <b>{score}%</b>'
+        elif score >= 90:
+            response = f'Good Match: <b>{score}%</b>'
+        elif score >= 80:
+            response = f'Likely Match: <b>{score}%</b>'
+        elif score >= 70:
+            response = f'Possible Match: <b>{score}%</b>'
         else:
-            response=f'Unlikely Match\n<i>We\'re unsure what your song is, but it may be this</i>'
-        response=response+f'\n\n<b>{artist}</b> - <b>{title}</b>\n'
+            response = f'Unlikely Match\n<i>We\'re unsure what your song is, but it may be this</i>'
+        response += f'\n\n<b>{artist}</b> - <b>{title}</b>\n'
         if album != None:
-            response=response+f'\nAlbum: {album}'
-        response=response+f'\nLength: {duration}'
+            response += f'\nAlbum: {album}'
+        response += f'\nLength: {duration}'
         if release_date != None:
-            response=response+f'\nRelease date: {release_date}'
-        response=response+f'\n'
+            response += f'\nRelease date: {release_date}'
+        response += f'\n'
         if youtube != None:
-            response=response+f'\nYouTube: {youtube}'
+            response += f'\nYouTube: {youtube}'
         if spotify != None:
-            response=response+f'\nSpotify: {spotify}'
+            response += f'\nSpotify: {spotify}'
         if deezer != None:
-            response=response+f'\nDeezer: {deezer}'
-        response = response + '\n\nPlease consider <a href="https://t.me/dailychannelsbot?start=songidbot">leaving us a review!</a>'
-        botsend(update, context, response)  # Send the respective user this information
+            response += f'\nDeezer: {deezer}'
+        response = response + \
+            '\n\nPlease consider <a href="https://t.me/dailychannelsbot?start=songidbot">leaving us a review!</a>'
+        # Send the respective user this information
+        botsend(update, context, response)
         logbot(update, '*Sent song information*')
-        context.bot.send_message(devid, f'User @{update.effective_user.username} identified a song!')
+        context.bot.send_message(
+            devid, f'User @{update.effective_user.username} ({update.effective_chat.id}) identified a song!')
     elif data["status"]["code"] == 3003:
         logger.info('ACR: Limit exceeded')
-        botsend(update, context, 'We\'ve hit our daily API limit. Type /limit for more info')
-        context.bot.send_message(devid, f'User @{update.effective_user.username} hit the limit')
+        botsend(update, context,
+                'We\'ve hit our daily API limit. Type /limit for more info')
+        context.bot.send_message(
+            devid, f'User @{update.effective_user.username} ({update.effective_chat.id}) hit the limit')
     else:  # If no match was found by ACRCloud
         logger.info('ACR: Failed to find a match')
         botsend(update, context, '''No Match :(
@@ -188,7 +193,7 @@ Tips for a higher chance of matching:
 - When recording with the Telegram Voice Recorder, try to record for at least 10 seconds, preferably during the chorus of a song where it's most iconic.
 - When uploading a file, try to make sure the audio quality is the best you have accessible.''')
         logbot(update, 'No Match :(')
-        context.bot.send_message(devid, f'User @{update.effective_user.username} couldn\'t find a match')
+        context.bot.send_message(devid, f'User @{update.effective_user.username} ({update.effective_chat.id}) couldn\'t find a match')
 
 
 
