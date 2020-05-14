@@ -61,7 +61,7 @@ class ACRAPI():
         logger.info('ACR: Processing request...')
         buf = open(filePath, 'rb').read()
         #recognize by file_audio_buffer that read from file path, and skip 0 seconds from from the beginning of sys.argv[1].
-        data = re.recognize_by_filebuffer(buf, 0, 30)
+        data = re.recognize_by_filebuffer(buf, 0, 60)
         data = json.loads(data)
         logger.info('ACR: Processing complete!')
         return data
