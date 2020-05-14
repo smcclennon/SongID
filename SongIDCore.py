@@ -2,7 +2,7 @@ import telegram, json, time, os
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, MessageQueue
 
 
-ver='0.2.2.6.2'
+ver='0.2.2.6.3'
 botName=f'SongID'
 botVer=f'{botName} {ver}'
 botAt=f'@SongIDBot'
@@ -44,12 +44,25 @@ dp = u.dispatcher
 
 # Log the users previous message (debugging)
 def logusr(update):
-    logger.info(f'[@{update.effective_chat.username}][{update.effective_chat.first_name} {update.effective_chat.last_name}][U:{update.effective_chat.id}][M:{update.effective_message.message_id}]: {update.message.text}')
+    if hasattr(update.message, 'text'):
+        message = update.message.text
+    else:
+        message = '[No message]'
+    logger.info(f'[@{update.effective_chat.username}][{update.effective_chat.first_name} {update.effective_chat.last_name}][U:{update.effective_chat.id}][M:{update.effective_message.message_id}]: {message}')
 
 
 # Send a message to the user
 def botsend(update, context, msg):
-    update.message.reply_text(str(msg)+f'\n\n<i>{botAt} <code>{ver}</code></i>', parse_mode=telegram.ParseMode.HTML)
+    if hasattr(update.message, 'reply_text'):
+        update.message.reply_text(str(msg)+f'\n\n<i>{botAt} <code>{ver}</code></i>', parse_mode=telegram.ParseMode.HTML)
+
+def devsend(update, context, msg):
+    if '{update.message.text}' in msg:
+        if hasattr(update.message, 'text'):
+            msg = update.message.text
+        else:
+            msg = '[No message]'
+    context.bot.send_message(devid, f'User @{update.effective_user.username} ({update.effective_chat.id}): \'{msg}\'')
 
 
 # Send a message to the user and log the message sent
