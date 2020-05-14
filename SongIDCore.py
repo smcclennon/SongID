@@ -2,7 +2,7 @@ import telegram, json, time, os
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, MessageQueue
 
 
-ver='0.2.2.6'
+ver='0.2.2.6.2'
 botName=f'SongID'
 botVer=f'{botName} {ver}'
 botAt=f'@SongIDBot'
@@ -37,7 +37,7 @@ with open('data/userdata.json') as f:
 
 
 #  Initialise the required telegram bot data
-u=Updater(token=token, use_context=True)
+u=Updater(token=token, use_context=True, request_kwargs={'read_timeout': 6, 'connect_timeout': 7})
 dp = u.dispatcher
 
 
