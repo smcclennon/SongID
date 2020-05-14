@@ -29,7 +29,7 @@ def error(update, context):
         logger.info('File cannot be accessed (likely deleted), being used by another process, pass')
         pass
     else:
-        if update.effective_message:
+        if update != None:
             text = "⚠️ An error occured, sorry for any inconvenience caused.\nThe developer has been notified and will look into this issue as soon as possible."
             update.effective_message.reply_text(text)
         # This traceback is created with accessing the traceback object from the sys.exc_info, which is returned as the
@@ -104,7 +104,7 @@ def startCMD(update, context):
 Key Features:
 - Scan for music in <b>videos</b>
 - Scan for music playing around you with <b>Telegram Audio Message</b>
-- Scan for music by <b>humming</b> with Telegram Audio Message
+- Direct links to services such as <b>Youtube</b>, <b>Spotify</b> and <b>Deezer</b>
 <i>[20MB file size limit]</i>
 
 To get started, upload a file or record a Telegram Audio Message''')
@@ -130,7 +130,6 @@ View SongID and my other projects here: github.com/smcclennon
 
 # Respond when the user sends an unknown command
 def unknownCMD(update, context):
-    context.bot.send_message(devid, f'User @{update.effective_user.username} ({update.effective_chat.id}): \'{update.message.text}\'')
     context.bot.send_message(devid, f'User @{update.effective_user.username} ({update.effective_chat.id}): \'{update.message.text}\'')
     logusr(update)
     logbotsend(update, context, "Sorry, I didn't understand that command.")
@@ -184,6 +183,11 @@ def mydataCMD(update, context):
     logbot(update, '*Sent user data*')
 
 
+# Respond to the user entering a command when in debug mode
+def maintenanceINFO(update, context):
+    logusr(update)
+    context.bot.send_message(devid, f'User @{update.effective_user.username} ({update.effective_chat.id}) [MAINTENANCE MODE]: \'{update.message.text}\'')
+    logbotsend(update, context, 'We\'re currently under maintenance, please try again later')
 
 
 def noisyProcess(update, context):
@@ -198,27 +202,49 @@ def clearProcess(update, context):
 def humProcess(update, context):
     SIDProcessor.fileProcess(update, context, 'hum')
 
-
-
+maintenance = 0
 
 dp.add_error_handler(error)  # Handle uncaught exceptions
-dp.add_handler(CommandHandler('start', startCMD))  # Respond to '/start'
-dp.add_handler(CommandHandler('mydata', mydataCMD))  # Respond to '/mydata'
-dp.add_handler(CommandHandler('help', helpCMD))  # Respond to '/help'
-dp.add_handler(CommandHandler('limit', limitCMD))  # Respond to '/limit'
+if maintenance == 1:
+    logger.info('- - - - MAINTENANCE MODE ENABLED - - - -')
+    dp.add_handler(CommandHandler('start', startCMD))  # Respond to '/start'
 
-# Handle different types of file uploads
-dp.add_handler(MessageHandler(Filters.audio, noisyProcess))
-dp.add_handler(MessageHandler(Filters.video, noisyProcess))
-dp.add_handler(MessageHandler(Filters.voice, humProcess))
+    dp.add_handler(CommandHandler('mydata', mydataCMD, filters=Filters.user(username=devusername)))  # Respond to '/mydata'
+    dp.add_handler(CommandHandler('help', helpCMD, filters=Filters.user(username=devusername)))  # Respond to '/help'
+    dp.add_handler(CommandHandler('limit', limitCMD, filters=Filters.user(username=devusername)))  # Respond to '/limit'
+
+    # Handle different types of file uploads
+    dp.add_handler(MessageHandler(Filters.audio & Filters.user(username=devusername), noisyProcess))
+    dp.add_handler(MessageHandler(Filters.video & Filters.user(username=devusername), noisyProcess))
+    dp.add_handler(MessageHandler(Filters.voice & Filters.user(username=devusername), humProcess))
+
+    dp.add_handler(MessageHandler(Filters.photo & Filters.user(username=devusername), invalidFiletype))  # Notify user of invalid file upload
+    dp.add_handler(MessageHandler(Filters.document & Filters.user(username=devusername), invalidFiletype))  # Notify user of invalid file upload
+    dp.add_handler(CommandHandler('r', restart, filters=Filters.user(username=devusername)))  # Allow the developer to restart the bot
+    dp.add_handler(CommandHandler('send', sendMsg, filters=Filters.user(username=devusername)))  # Allow the developer to send messages to users
+    dp.add_handler(MessageHandler(Filters.command, unknownCMD))  # Notify user of invalid command
+    #dp.add_handler(MessageHandler(Filters.text & Filters.user(username=devusername), helpCMD))  # Respond to '/help'
+
+    dp.add_handler(MessageHandler(Filters.text, maintenanceINFO))  # Respond to text
+
+elif maintenance == 0:
+    dp.add_handler(CommandHandler('start', startCMD))  # Respond to '/start'
+    dp.add_handler(CommandHandler('mydata', mydataCMD))  # Respond to '/mydata'
+    dp.add_handler(CommandHandler('help', helpCMD))  # Respond to '/help'
+    dp.add_handler(CommandHandler('limit', limitCMD))  # Respond to '/limit'
+
+    # Handle different types of file uploads
+    dp.add_handler(MessageHandler(Filters.audio, noisyProcess))
+    dp.add_handler(MessageHandler(Filters.video, noisyProcess))
+    dp.add_handler(MessageHandler(Filters.voice, humProcess))
 
 
-dp.add_handler(MessageHandler(Filters.photo, invalidFiletype))  # Notify user of invalid file upload
-dp.add_handler(MessageHandler(Filters.document, invalidFiletype))  # Notify user of invalid file upload
-dp.add_handler(CommandHandler('r', restart, filters=Filters.user(username=devusername)))  # Allow the developer to restart the bot
-dp.add_handler(CommandHandler('send', sendMsg, filters=Filters.user(username=devusername)))  # Allow the developer to send messages to users
-dp.add_handler(MessageHandler(Filters.command, unknownCMD))  # Notify user of invalid command
-dp.add_handler(MessageHandler(Filters.text, helpCMD))  # Respond to text
+    dp.add_handler(MessageHandler(Filters.photo, invalidFiletype))  # Notify user of invalid file upload
+    dp.add_handler(MessageHandler(Filters.document, invalidFiletype))  # Notify user of invalid file upload
+    dp.add_handler(CommandHandler('r', restart, filters=Filters.user(username=devusername)))  # Allow the developer to restart the bot
+    dp.add_handler(CommandHandler('send', sendMsg, filters=Filters.user(username=devusername)))  # Allow the developer to send messages to users
+    dp.add_handler(MessageHandler(Filters.command, unknownCMD))  # Notify user of invalid command
+    dp.add_handler(MessageHandler(Filters.text, helpCMD))  # Respond to text
 logger.info('Loaded: Handlers')
 
 
