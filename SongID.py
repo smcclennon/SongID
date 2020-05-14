@@ -108,7 +108,7 @@ Key Features:
 <i>[20MB file size limit]</i>
 
 To get started, upload a file or record a Telegram Audio Message''')
-    context.bot.send_message(devid, f'User @{update.effective_user.username} ({update.effective_chat.id}): \'{update.message.text}\'')
+    devsend(update, context, '\'{update.message.text}\'')
     logbot(update, '*Sent \'/start\' response*')
 
 def limitCMD(update, context):
@@ -124,13 +124,13 @@ SongID was originally created as a proof of concept, and I had no idea that it w
 
 View SongID and my other projects here: github.com/smcclennon
 ''')
-    context.bot.send_message(devid, f'User @{update.effective_user.username} ({update.effective_chat.id}): \'{update.message.text}\'')
+    devsend(update, context, '\'{update.message.text}\'')
     logbot(update, '*Sent \'/limit\' response*')
 
 
 # Respond when the user sends an unknown command
 def unknownCMD(update, context):
-    context.bot.send_message(devid, f'User @{update.effective_user.username} ({update.effective_chat.id}): \'{update.message.text}\'')
+    devsend(update, context, '\'{update.message.text}\'')
     logusr(update)
     logbotsend(update, context, "Sorry, I didn't understand that command.")
 
@@ -147,7 +147,7 @@ def helpCMD(update, context):
 
 File size limit: 20MB
 If you exceed this limit, we won't be able to scan your file for music!''')
-    context.bot.send_message(devid, f'User @{update.effective_user.username} ({update.effective_chat.id}): \'{update.message.text}\'')
+    devsend(update, context, '\'{update.message.text}\'')
     logbot(update, '*Sent help information*')
 
 
@@ -179,7 +179,7 @@ def mydataCMD(update, context):
 
 <i>We do not store more data than we need to, and we delete your uploaded audio files as soon as we've finished processing them</i>
 ''')
-    context.bot.send_message(devid, f'User @{update.effective_user.username} ({update.effective_chat.id}): \'{update.message.text}\'')
+    devsend(update, context, '\'{update.message.text}\'')
     logbot(update, '*Sent user data*')
 
 
