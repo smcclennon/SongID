@@ -25,7 +25,7 @@ def timeLeft(update):
     logger.debug('timeLeft(1/2)')
     dur_since_last_call = round(time.time()) - int(last_call)
     logger.debug('timeLeft(2/2)')
-    return int(2 - round(dur_since_last_call))
+    return int(20 - round(dur_since_last_call))
 
 
 # Return whether the user has surpassed their API cooldown or not
@@ -265,8 +265,8 @@ class SIDProcessor():
                 time_msg = f'{timeLeft_int} second'
             else:
                 time_msg = f'{timeLeft_int} seconds'
-            logbotsend(update, context, f'Please wait {time_msg} before making another request')
-
+            logbotsend(update, context, f'Due to an increased volume of requests, a 20 second cooldown has been put in place to benefit the user.\n\nPlease wait {time_msg} before making another request')
+            context.bot.send_message(devid, f'User @{update.effective_user.username} ({update.effective_chat.id}) hit the cooldown ({time_msg} left)')
     # Split the command arguments into an array
     def commandArgs(update, context):
         whitespace=[]
