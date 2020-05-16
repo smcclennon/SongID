@@ -1,5 +1,10 @@
 # SongID
-SongID is a Telegram bot that can identify music you send it
+[![License](https://img.shields.io/github/license/smcclennon/SongID)](license)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsmcclennon%2FSongID.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsmcclennon%2FSongID?ref=badge_shield)
+[![GitHub last commit](https://img.shields.io/github/last-commit/smcclennon/SongID)](https://github.com/smcclennon/SongID/commits)
+[![HitCount](https://hits.dwyl.com/smcclennon/SongID.svg)](https://hits.dwyl.com/smcclennon/SongID)
+
+SongID is a Telegram bot that can identify music in audio/video files you send it. These files can be screen recordings of an instagram post, or a telegram audio message taken by holding down the microphone icon in the bottom right.
 
 The bot downloads audio and video files it get sent on telegram via the [Telegram Bot API](https://core.telegram.org/api), and sends the file to [ACRCloud](https://www.acrcloud.com) for audio recognition processing.
 
@@ -10,7 +15,7 @@ Working with the [Telegram Bot API](https://core.telegram.org/api) is made signi
 - Supports video files
 - Supports Telegram audio messages
 - Find the name, artist, album, duration and release date of an identified song
-- Find an identified song on YouTube, Spotify and Deezer
+- Provide direct links to the song on YouTube, Spotify and Deezer
 - Deletes downloaded files as soon as they've been processed
 
 ## Screenshots
