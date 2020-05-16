@@ -1,5 +1,5 @@
 # SongID
-[![License](https://img.shields.io/github/license/smcclennon/SongID)](license)
+[![License](https://img.shields.io/github/license/smcclennon/SongID)](LICENSE)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsmcclennon%2FSongID.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsmcclennon%2FSongID?ref=badge_shield)
 [![GitHub last commit](https://img.shields.io/github/last-commit/smcclennon/SongID)](https://github.com/smcclennon/SongID/commits)
 [![HitCount](https://hits.dwyl.com/smcclennon/SongID.svg)](https://hits.dwyl.com/smcclennon/SongID)
