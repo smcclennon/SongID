@@ -1,4 +1,6 @@
 # SongID
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsmcclennon%2FSongID.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsmcclennon%2FSongID?ref=badge_shield)
+
 SongID is a Telegram bot that can identify music you send it
 
 The bot downloads audio and video files it get sent on telegram via the [Telegram Bot API](https://core.telegram.org/api), and sends the file to [ACRCloud](https://www.acrcloud.com) for audio recognition processing.
@@ -17,3 +19,7 @@ Working with the [Telegram Bot API](https://core.telegram.org/api) is made signi
 <img src="https://smcclennon.github.io/assets/images/screenshots/SongID/voice.png" alt="Send Voice Message" width="100%"></img><img src="https://smcclennon.github.io/assets/images/screenshots/SongID/video.png" alt="Send Video" width="100%"></img>
 
 *Written in Python 3.8 on Windows 10*
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsmcclennon%2FSongID.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsmcclennon%2FSongID?ref=badge_large)
