@@ -18,6 +18,9 @@ Working with the [Telegram Bot API](https://core.telegram.org/api) is made signi
 - Provide direct links to the song on YouTube, Spotify and Deezer
 - Deletes downloaded files as soon as they've been processed
 
+## Blog Post
+Read the blog post on how I created SongID on the [ACRCloud blog](https://www.acrcloud.com/blog/how-a-15-year-old-created-a-music-recognition-service-in-less-than-a-day-with-acrcloud)
+
 ## Screenshots
 <img src="https://smcclennon.github.io/assets/images/screenshots/SongID/voice.png" alt="Send Voice Message" width="100%"></img><img src="https://smcclennon.github.io/assets/images/screenshots/SongID/video.png" alt="Send Video" width="100%"></img>
 
