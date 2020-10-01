@@ -7,10 +7,23 @@ from telegram import ParseMode
 from telegram.utils.helpers import mention_html
 import sys, traceback
 from threading import Thread
+import urllib.request  # Check for internet connectivity
 
 
 os.system(f'title _ _  ---====  SongID {ver}  ====---  _ _')  # Set the windows console window title
 
+while True:
+    try:
+        ACR_PING_CODE = urllib.request.urlopen("https://identify-eu-west-1.acrcloud.com").getcode()
+        if ACR_PING_CODE == 200:
+            logger.info('ACR Cloud pinged successfully!')
+            break
+        else:
+            logger.warning('ACR Cloud ping error code: '+str(ACR_PING_CODE)+', retrying in 20 seconds')
+            time.sleep(20)
+    except:
+        logger.warning('Unable to ping ACR Cloud, retrying in 10 seconds')
+        time.sleep(10)
 
 
 
