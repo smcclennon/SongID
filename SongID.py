@@ -291,6 +291,6 @@ if heroku_enabled == 'True':
     u.bot.setWebhook(heroku_webhook + token)
     logger.info('Heroku webhook initialised')
 else:
-u.start_polling()
+    u.start_polling()
     logger.info('Standard polling initialised')
 u.idle()
