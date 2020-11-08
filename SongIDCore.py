@@ -27,6 +27,10 @@ with open('data/token.json', 'r') as f:
     token = telegramConfig["token"]
     devid = telegramConfig["devid"]
     devusername = telegramConfig["devusername"]
+    heroku_enabled = all_tokens["heroku"]["enabled"]
+    heroku_webhook = all_tokens["heroku"]["webhook"]
+    heroku_listen = all_tokens["heroku"]["listen"]
+    heroku_port = all_tokens["heroku"]["port"]
 
 
 # Load data/userdata.json into the variable 'userdata'
