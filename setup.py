@@ -111,6 +111,8 @@ print('\nClearing all variables (preparing for running SongID)...')
 import sys
 sys.modules[__name__].__dict__.clear()
 
+print('Setup complete')
+'''
 print('Now importing SongID. If you have provided any invalid tokens,\
 SongID will crash.')
 print('Importing SongID...\n\n\n')
@@ -130,3 +132,4 @@ and if you haven\'t set any, re-run this setup script and enter the correct valu
         raise(e)
 
 input('\nPress enter to exit')
+'''
