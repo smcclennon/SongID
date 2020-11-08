@@ -1,7 +1,7 @@
 {
     "telegram": {
         "token": "insert telegram bot token here",
-        "devid": 000000000,
+        "devid": "000000000",
         "devusername": "@username"
     },
     "acr": {
@@ -17,5 +17,12 @@
             "access_key": "insert ACRCloud Project 3 access key",
             "access_secret": "insert ACRCloud Project 3 access secret"
         }
+    },
+    "heroku": {
+        "enabled": "False",
+        "listen": "0.0.0.0",
+        "port": "5000",
+        "webhook": "https://yourherokuappname.herokuapp.com/"
+
     }
 }
