@@ -33,6 +33,26 @@ def error(update, context):
     # we want to notify the user of this problem. This will always work, but not notify users if the update is an
     # callback or inline query, or a poll update. In case you want this, keep in mind that sending the message
     # could fail
+    try:
+        raise context.error
+    except telegram.error.Unauthorized as e:
+        logging.error(f'Unauthorized: {e}')
+        # remove update.message.chat_id from conversation list
+    except telegram.error.BadRequest as e:
+        logging.error(f'BadRequest: {e}')
+        # handle malformed requests - read more below!
+    except telegram.error.TimedOut as e:
+        logging.error(f'TimedOut: {e}')
+        # handle slow connection problems
+    except telegram.error.NetworkError as e:
+        logging.error(f'NetworkError: {e}')
+        # handle other connection problems
+    except telegram.error.ChatMigrated as e:
+        logging.error(f'ChatMigrated: {e}')
+        # the chat_id of a group has changed, use e.new_chat_id instead
+    except telegram.error.TelegramError as e:
+        logging.error(f'Telegram Error: {e}')
+        # handle all other telegram related errors
     if 'An existing connection was forcibly closed by the remote host' in str(context.error):
         #update.effective_message.reply_text('⚠️ Telegram closed the connection. Please try again.')
         #logbot(update, '⚠️ Telegram closed the connection. Please try again.')
@@ -64,7 +84,7 @@ def error(update, context):
         if update.poll:
             payload += f' with the poll id {update.poll.id}.'
         # lets put this in a "well" formatted text
-        text = f"⚠️⚠️⚠️ Error Report ⚠️⚠️⚠️\n\nThe error <code>{context.error}</code> occured{payload}. The full traceback:\n\n<code>{trace}" \
+        text = f"⚠️ Uncaught error\n\nThe error <code>{context.error}</code> occured{payload}. The full traceback:\n\n<code>{trace}" \
             f"</code>"
         # and send it to the dev
         context.bot.send_message(devid, text, parse_mode=ParseMode.HTML)
