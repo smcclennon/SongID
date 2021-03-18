@@ -19,7 +19,7 @@ Working with the [Telegram Bot API](https://core.telegram.org/api) is made signi
 - Deletes downloaded files as soon as they've been processed
 
 ## Blog Post
-Read the blog post on how I created SongID on the [ACRCloud blog](https://www.acrcloud.com/blog/how-a-15-year-old-created-a-music-recognition-service-in-less-than-a-day-with-acrcloud)
+Read the blog post on how I created SongID on the [ACRCloud blog](https://blog.acrcloud.com/how-a-15-year-old-created-a-music-recognition-service-in-less-than-a-day-with-acrcloud)
 
 Also featured on [Telegram Channels](https://telegramchannels.me/bots/songidbot) and [BotoStore](https://botostore.com/c/songidbot/)
 ## Screenshots
