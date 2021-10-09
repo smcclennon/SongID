@@ -1,5 +1,6 @@
 import telegram, json, time, os
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, MessageQueue
+import sentry_sdk
 
 
 ver='0.2.2.6.3'
@@ -31,6 +32,15 @@ with open('data/token.json', 'r') as f:
     heroku_webhook = all_tokens["heroku"]["webhook"]
     heroku_listen = all_tokens["heroku"]["listen"]
     heroku_port = all_tokens["heroku"]["port"]
+    sentry_dsn = all_tokens["sentry"]["dsn"]
+
+sentry_sdk.init(
+dsn=sentry_dsn,
+sample_rate=1.0,
+traces_sample_rate=1.0,
+attach_stacktrace=True,
+with_locals=True
+)
 
 
 # Load data/userdata.json into the variable 'userdata'
