@@ -23,6 +23,8 @@
         "listen": "0.0.0.0",
         "port": "5000",
         "webhook": "https://yourherokuappname.herokuapp.com/"
-
+    },
+    "sentry": {
+        "dsn": "https://examplePublicKey@o0.ingest.sentry.io/0"
     }
 }
