@@ -3,7 +3,7 @@ from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, Messa
 import sentry_sdk
 
 
-ver='0.2.3'
+ver='0.2.4'
 botName=f'SongID'
 botVer=f'{botName} {ver}'
 botAt=f'@SongIDBot'
