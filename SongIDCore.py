@@ -36,6 +36,7 @@ with open('data/token.json', 'r') as f:
 
 sentry_sdk.init(
 dsn=sentry_dsn,
+release=ver,
 sample_rate=1.0,
 traces_sample_rate=1.0,
 attach_stacktrace=True,
