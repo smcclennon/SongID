@@ -19,7 +19,10 @@ while True:
             logger.info('ACR Cloud pinged successfully!')
             break
         else:
-            logger.warning('ACR Cloud ping error code: '+str(ACR_PING_CODE)+', retrying in 20 seconds')
+            logger.warning(
+                f'ACR Cloud ping error code: {str(ACR_PING_CODE)}, retrying in 20 seconds'
+            )
+
             time.sleep(20)
     except:
         logger.warning('Unable to ping ACR Cloud, retrying in 10 seconds')
@@ -57,10 +60,8 @@ def error(update, context):
         #update.effective_message.reply_text('⚠️ Telegram closed the connection. Please try again.')
         #logbot(update, '⚠️ Telegram closed the connection. Please try again.')
         logger.info('existing connection closed (error exception catch temp code), pass')
-        pass
     elif '[WinError 32] The process cannot access the file because it is being used by another process' in str(context.error):
         logger.info('File cannot be accessed (likely deleted), being used by another process, pass')
-        pass
     else:
         if update != None:
             text = "⚠️ An error occured, sorry for any inconvenience caused.\nThe developer has been notified and will look into this issue as soon as possible."
@@ -108,7 +109,7 @@ def restart(update, context):
 def sendMsg(update, context):
     logusr(update)
     processed = SIDProcessor.commandArgs(update, context)
-    if processed == None:
+    if processed is None:
         logbotsend(update, context, '⚠️ Invalid syntax! <i>Make sure your spacing is correct</i>')
         helpCMD(update, context)
     elif processed[0] == 'too_long':
@@ -238,7 +239,25 @@ def humProcess(update, context):
 maintenance = 0
 
 dp.add_error_handler(error)  # Handle uncaught exceptions
-if maintenance == 1:
+if maintenance == 0:
+    dp.add_handler(CommandHandler('start', startCMD))  # Respond to '/start'
+    dp.add_handler(CommandHandler('mydata', mydataCMD))  # Respond to '/mydata'
+    dp.add_handler(CommandHandler('help', helpCMD))  # Respond to '/help'
+    dp.add_handler(CommandHandler('limit', limitCMD))  # Respond to '/limit'
+
+    # Handle different types of file uploads
+    dp.add_handler(MessageHandler(Filters.audio, noisyProcess))
+    dp.add_handler(MessageHandler(Filters.video, noisyProcess))
+    dp.add_handler(MessageHandler(Filters.voice, humProcess))
+
+
+    dp.add_handler(MessageHandler(Filters.photo, invalidFiletype))  # Notify user of invalid file upload
+    dp.add_handler(MessageHandler(Filters.document, invalidFiletype))  # Notify user of invalid file upload
+    dp.add_handler(CommandHandler('r', restart, filters=Filters.user(username=devusername)))  # Allow the developer to restart the bot
+    dp.add_handler(CommandHandler('send', sendMsg, filters=Filters.user(username=devusername)))  # Allow the developer to send messages to users
+    dp.add_handler(MessageHandler(Filters.command, unknownCMD))  # Notify user of invalid command
+    dp.add_handler(MessageHandler(Filters.text, helpCMD))  # Respond to text
+elif maintenance == 1:
     logger.info('- - - - MAINTENANCE MODE ENABLED - - - -')
     dp.add_handler(CommandHandler('start', startCMD))  # Respond to '/start'
 
@@ -260,24 +279,6 @@ if maintenance == 1:
 
     dp.add_handler(MessageHandler(Filters.text, maintenanceINFO))  # Respond to text
 
-elif maintenance == 0:
-    dp.add_handler(CommandHandler('start', startCMD))  # Respond to '/start'
-    dp.add_handler(CommandHandler('mydata', mydataCMD))  # Respond to '/mydata'
-    dp.add_handler(CommandHandler('help', helpCMD))  # Respond to '/help'
-    dp.add_handler(CommandHandler('limit', limitCMD))  # Respond to '/limit'
-
-    # Handle different types of file uploads
-    dp.add_handler(MessageHandler(Filters.audio, noisyProcess))
-    dp.add_handler(MessageHandler(Filters.video, noisyProcess))
-    dp.add_handler(MessageHandler(Filters.voice, humProcess))
-
-
-    dp.add_handler(MessageHandler(Filters.photo, invalidFiletype))  # Notify user of invalid file upload
-    dp.add_handler(MessageHandler(Filters.document, invalidFiletype))  # Notify user of invalid file upload
-    dp.add_handler(CommandHandler('r', restart, filters=Filters.user(username=devusername)))  # Allow the developer to restart the bot
-    dp.add_handler(CommandHandler('send', sendMsg, filters=Filters.user(username=devusername)))  # Allow the developer to send messages to users
-    dp.add_handler(MessageHandler(Filters.command, unknownCMD))  # Notify user of invalid command
-    dp.add_handler(MessageHandler(Filters.text, helpCMD))  # Respond to text
 logger.info('Loaded: Handlers')
 
 
@@ -285,9 +286,7 @@ logger.info('Loading Complete!')
 if heroku_enabled == 'True':
     logger.info('Initialising Heroku webhook...')
     PORT = int(os.environ.get('PORT', int(heroku_port)))
-    u.start_webhook(listen=heroku_listen,
-                            port=int(PORT),
-                            url_path=token)
+    u.start_webhook(listen=heroku_listen, port=PORT, url_path=token)
     u.bot.setWebhook(heroku_webhook + token)
     logger.info('Heroku webhook initialised')
 else:

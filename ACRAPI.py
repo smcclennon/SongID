@@ -48,7 +48,7 @@ class ACRAPI():
 
 
 
-    def noisy(filePath):
+    def noisy(self):
         config = config_noisy
 
         '''This module can recognize ACRCloud by most of audio/video file.
@@ -59,7 +59,7 @@ class ACRAPI():
         #recognize by file path, and skip 0 seconds from from the beginning of sys.argv[1].
         #re.recognize_by_file(filePath, 0, 10)
         logger.info('ACR: Processing request...')
-        buf = open(filePath, 'rb').read()
+        buf = open(self, 'rb').read()
         #recognize by file_audio_buffer that read from file path, and skip 0 seconds from from the beginning of sys.argv[1].
         data = re.recognize_by_filebuffer(buf, 0, 60)
         data = json.loads(data)
@@ -69,7 +69,7 @@ class ACRAPI():
 
 
 
-    def hum(filePath):
+    def hum(self):
         config = config_hum
 
         '''This module can recognize ACRCloud by most of audio/video file.
@@ -80,7 +80,7 @@ class ACRAPI():
         #recognize by file path, and skip 0 seconds from from the beginning of sys.argv[1].
         #re.recognize_by_file(filePath, 0, 10)
         logger.info('ACR: Processing request...')
-        buf = open(filePath, 'rb').read()
+        buf = open(self, 'rb').read()
         #recognize by file_audio_buffer that read from file path, and skip 0 seconds from from the beginning of sys.argv[1].
         data = re.recognize_by_filebuffer(buf, 0, 10)
         data = json.loads(data)

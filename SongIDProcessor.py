@@ -14,7 +14,7 @@ def saveUserData():
 # Format milliseconds to minutes:seconds (used for track-length)
 def msConvert(ms):
     ms = int(ms)
-    seconds=int(ms/1000)
+    seconds = ms // 1000
     return time.strftime('%M:%S', time.gmtime(seconds))
 
 
@@ -51,7 +51,7 @@ def authorised(update):
 # Download the users uploaded file
 def fileDownload(update, context):
     file_id = None
-    while file_id == None:
+    while file_id is None:
         # Get the file-id
         try:
             file_id = update.effective_message.audio.file_id
@@ -77,7 +77,7 @@ def fileDownload(update, context):
     try:
         file_info = context.bot.get_file(file_id)
         file_size = file_info["file_size"]
-        if 20000000 - int(file_size) >= 0:
+        if int(file_size) <= 20000000:
             web_path = file_info["file_path"]  # Get the original filename
             extension = os.path.splitext(f'{web_path}')[1]  # Get the file extension (.mp3, .mp4 etc)
             fileName = f'{update.effective_chat.id}_{update.effective_message.message_id}_{file_id}{extension}'
@@ -210,29 +210,38 @@ Tips for a higher chance of matching:
 class SIDProcessor():
 
     # Add user data to the 'userdata' variable and save it to disk
-    def addUserData(update, apiCalls, lastCall):
-        userdata[f'{update.effective_user.id}'] = {'username': f'{update.effective_chat.username}', 'name': f'{update.effective_user.first_name} {update.effective_user.last_name}', 'api_calls': f'{apiCalls}', 'last_call': f'{lastCall}'}
-        logger.info(f'User data added/updated: [{update.effective_user.id}: {update.effective_user.username}, {update.effective_user.first_name} {update.effective_user.last_name}, {apiCalls}, {lastCall}]')
+    def addUserData(self, apiCalls, lastCall):
+        userdata[f'{self.effective_user.id}'] = {
+            'username': f'{self.effective_chat.username}',
+            'name': f'{self.effective_user.first_name} {self.effective_user.last_name}',
+            'api_calls': f'{apiCalls}',
+            'last_call': f'{lastCall}',
+        }
+
+        logger.info(
+            f'User data added/updated: [{self.effective_user.id}: {self.effective_user.username}, {self.effective_user.first_name} {self.effective_user.last_name}, {apiCalls}, {lastCall}]'
+        )
+
         saveUserData()
 
     # Get user data for the respective user
-    def getUserData(update):
+    def getUserData(self):
         #update = json.loads(update)
         logger.debug('getUserData(0/2)')
 
         # May be completely unnecessary, just in case
-        if hasattr(update, 'effective_chat'):
+        if hasattr(self, 'effective_chat'):
             # Get users Telegram ID
-            userID=str(update.effective_chat.id)
+            userID = str(self.effective_chat.id)
             # Add user to userdata in case they did not initially send /start
             # to prevent AttributeErrors occurring from their key not being
             # present in the database
             # (https://github.com/smcclennon/SongID/issues/6#issuecomment-1021517621)
             if userID not in userdata:
-                SIDProcessor.addUserData(update, '0', '0')
+                SIDProcessor.addUserData(self, '0', '0')
         logger.debug('getUserData(1/2)')
 
-        data = userdata[f'{update.effective_user.id}']
+        data = userdata[f'{self.effective_user.id}']
         logger.debug('getUserData(2/2)')
         return data
 
@@ -240,79 +249,94 @@ class SIDProcessor():
 
 
     # If authorised, download the users uploaded file and send it to the API response processor, and then delete the downloaded file from disk
-    def fileProcess(update, context, processor):
-        logusr(update)
-        for attempt in range(0,10):
+    def fileProcess(self, context, processor):
+        logusr(self)
+        for _ in range(10):
             try:
                 logger.info('fileProcess: Attempting to send ChatAction.TYPING')
-                context.bot.sendChatAction(chat_id=update.effective_chat.id, action=telegram.ChatAction.TYPING, timeout=10)
+                context.bot.sendChatAction(
+                    chat_id=self.effective_chat.id,
+                    action=telegram.ChatAction.TYPING,
+                    timeout=10,
+                )
+
                 logger.info('fileProcess: Successfully sent ChatAction.TYPING')
             except:
                 logger.info('fileProcess: Failed to send ChatAction.TYPING')
                 continue
             logger.info('fileProcess: Breaking from ChatAction loop')
             break
-        if authorised(update):
-            context.bot.sendChatAction(chat_id=update.effective_chat.id, action=telegram.ChatAction.RECORD_AUDIO, timeout=20)
-            fileName = fileDownload(update, context)
+        if authorised(self):
+            context.bot.sendChatAction(
+                chat_id=self.effective_chat.id,
+                action=telegram.ChatAction.RECORD_AUDIO,
+                timeout=20,
+            )
+
+            fileName = fileDownload(self, context)
             if fileName != 'FILE_TOO_BIG':
                 deleteSuccess = 0
                 while deleteSuccess != 5:
                     try:
                         if processor == 'noisy':
-                            dataProcess(update, context, ACRAPI.noisy(f'{downloadDIR}/{fileName}'))
+                            dataProcess(self, context, ACRAPI.noisy(f'{downloadDIR}/{fileName}'))
                             os.remove(f'{downloadDIR}/{fileName}')
                         elif processor == 'clear':
-                            dataProcess(update, context, ACRAPI.clear(f'{downloadDIR}/{fileName}'))
+                            dataProcess(self, context, ACRAPI.clear(f'{downloadDIR}/{fileName}'))
                             os.remove(f'{downloadDIR}/{fileName}')
                         elif processor == 'hum':
-                            dataProcess(update, context, ACRAPI.hum(f'{downloadDIR}/{fileName}'))
+                            dataProcess(self, context, ACRAPI.hum(f'{downloadDIR}/{fileName}'))
                             os.remove(f'{downloadDIR}/{fileName}')
                         deleteSuccess = 5
                     except:
                         deleteSuccess+=1
-                        continue
         else:
-            timeLeft_int = timeLeft(update)
+            timeLeft_int = timeLeft(self)
             if timeLeft_int == 1:
                 time_msg = f'{timeLeft_int} second'
             else:
                 time_msg = f'{timeLeft_int} seconds'
-            logbotsend(update, context, f'Due to an increased volume of requests, a 20 second cooldown has been put in place to benefit the user.\n\nPlease wait {time_msg} before making another request')
-            context.bot.send_message(devid, f'User @{update.effective_user.username} ({update.effective_chat.id}) hit the cooldown ({time_msg} left)')
+            logbotsend(
+                self,
+                context,
+                f'Due to an increased volume of requests, a 20 second cooldown has been put in place to benefit the user.\n\nPlease wait {time_msg} before making another request',
+            )
+
+            context.bot.send_message(
+                devid,
+                f'User @{self.effective_user.username} ({self.effective_chat.id}) hit the cooldown ({time_msg} left)',
+            )
     # Split the command arguments into an array
-    def commandArgs(update, context):
+    def commandArgs(self, context):
         whitespace=[]
         keysplit=1
         msgsplit=2
-        command = update.message.text
+        command = self.message.text
         split = command.split(' ')  # Split the message with each space
         if len(split) < 3:
             return None
-        if len(split) >= 3:
-            key = split[1]
-            while key == "":  # If the user used irregular spacing
-                keysplit+=1
-                whitespace.append(keysplit-1)
-                key = split[keysplit]
+        key = split[1]
+        while key == "":  # If the user used irregular spacing
+            keysplit+=1
+            whitespace.append(keysplit-1)
+            key = split[keysplit]
 
-            message = command
-            for space in whitespace:
-                message = message.replace(split[space], '', 1)
-            message = message.replace(split[0]+' ', '', 1)
-            message = message.replace(split[keysplit]+' ', '', 1)
+        message = command
+        for space in whitespace:
+            message = message.replace(split[space], '', 1)
+        message = message.replace(f'{split[0]} ', '', 1)
+        message = message.replace(f'{split[keysplit]} ', '', 1)
 
-            if len(message) > 5000:
-                return ['too_long', len(message)-5000]
-            return [key, message]
+        if len(message) > 5000:
+            return ['too_long', len(message)-5000]
+        return [key, message]
 
 
     # Find the parent key(s) within a dictionary
-    def find_key(d, value):  # https://stackoverflow.com/a/15210253
-        for k,v in d.items():
+    def find_key(self, value):  # https://stackoverflow.com/a/15210253
+        for k,v in self.items():
             if isinstance(v, dict):
-                p = SIDProcessor.find_key(v, value)
-                if p:
+                if p := SIDProcessor.find_key(v, value):
                     return [k] + p
             elif v == value:
                 return [k]
