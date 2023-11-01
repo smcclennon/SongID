@@ -4,9 +4,9 @@ import sentry_sdk
 
 
 ver='0.2.4'
-botName=f'SongID'
+botName = 'SongID'
 botVer=f'{botName} {ver}'
-botAt=f'@SongIDBot'
+botAt = '@SongIDBot'
 botUsername='SongIDbot'
 downloadDIR='data/downloads'
 
@@ -69,7 +69,10 @@ def logusr(update):
 # Send a message to the user
 def botsend(update, context, msg):
     if hasattr(update.message, 'reply_text'):
-        update.message.reply_text(str(msg)+f'\n\n<i>{botAt} <code>{ver}</code></i>', parse_mode=telegram.ParseMode.HTML)
+        update.message.reply_text(
+            f'{str(msg)}\n\n<i>{botAt} <code>{ver}</code></i>',
+            parse_mode=telegram.ParseMode.HTML,
+        )
 
 def devsend(update, context, msg):
     if '{update.message.text}' in msg:
@@ -82,7 +85,11 @@ def devsend(update, context, msg):
 
 # Send a message to the user and log the message sent
 def logbotsend(update, context, msg):
-    update.message.reply_text(str(msg)+f'\n\n<i>{botAt} <code>{ver}</code></i>', parse_mode=telegram.ParseMode.HTML)
+    update.message.reply_text(
+        f'{str(msg)}\n\n<i>{botAt} <code>{ver}</code></i>',
+        parse_mode=telegram.ParseMode.HTML,
+    )
+
     logger.info(f'[@{botUsername}][{botName}][M:{update.effective_message.message_id}]: {msg}')
 
 

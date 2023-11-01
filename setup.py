@@ -58,7 +58,7 @@ for variable_name in required_vars:
     print('\n    '+variable_name+'...', end='')
     environment_variables['current_env_var'][variable_name] = os.getenv(variable_name)
 
-    if environment_variables['current_env_var'][variable_name] == None:
+    if environment_variables['current_env_var'][variable_name] is None:
         print('Failed!\n        [!] Environment variable does not exist!')
         environment_variables["failed"].append(variable_name)
     else:
@@ -68,14 +68,14 @@ for variable_name in required_vars:
 
 print(f'\n\nSuccessfully imported {len(environment_variables["success"])} environment variables')
 for item in environment_variables["success"]:
-    print('    '+str(item))
+    print(f'    {str(item)}')
 
 if len(environment_variables["failed"]) > 0:
     print(f'\nFailed to import {len(environment_variables["failed"])} environment variables')
     for item in environment_variables["failed"]:
         print('\n    '+item)
-        print('    Please manually enter a value for '+item)
-        environment_variables["success"][item] = str(input('        '+item+' = '))
+        print(f'    Please manually enter a value for {item}')
+        environment_variables["success"][item] = str(input(f'        {item} = '))
 
 
 print('\n\nLoading token example json file...')
@@ -91,7 +91,12 @@ tokens["acr"]["noisy"]["access_key"] = environment_variables["success"]["acr_noi
 tokens["acr"]["noisy"]["access_secret"] = environment_variables["success"]["acr_noisy_access_secret"]
 tokens["acr"]["hum"]["access_key"] = environment_variables["success"]["acr_hum_access_key"]
 tokens["acr"]["hum"]["access_secret"] = environment_variables["success"]["acr_hum_access_secret"]
-if str(environment_variables["success"]["heroku_enabled"]).upper() in ['1', 'true', 'y', 'yes']:
+if str(environment_variables["success"]["heroku_enabled"]).upper() in {
+    '1',
+    'true',
+    'y',
+    'yes',
+}:
     tokens["heroku"]["enabled"] = 'True'
 tokens["heroku"]["webhook"] = environment_variables["success"]["heroku_webhook"]
 
