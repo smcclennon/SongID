@@ -45,12 +45,11 @@ class ACRAPI():
 
 
     def noisy(filePath):
-        config = config_noisy
 
         '''This module can recognize ACRCloud by most of audio/video file.
             Audio: mp3, wav, m4a, flac, aac, amr, ape, ogg ...
             Video: mp4, mkv, wmv, flv, ts, avi ...'''
-        re = ACRCloudRecognizer(config)
+        re = ACRCloudRecognizer(config['noisy'])
 
         #recognize by file path, and skip 0 seconds from from the beginning of sys.argv[1].
         #re.recognize_by_file(filePath, 0, 10)
@@ -66,12 +65,11 @@ class ACRAPI():
 
 
     def hum(filePath):
-        config = config_hum
 
         '''This module can recognize ACRCloud by most of audio/video file.
             Audio: mp3, wav, m4a, flac, aac, amr, ape, ogg ...
             Video: mp4, mkv, wmv, flv, ts, avi ...'''
-        re = ACRCloudRecognizer(config)
+        re = ACRCloudRecognizer(config['hum'])
 
         #recognize by file path, and skip 0 seconds from from the beginning of sys.argv[1].
         #re.recognize_by_file(filePath, 0, 10)
