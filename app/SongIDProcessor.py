@@ -218,22 +218,9 @@ class SIDProcessor():
     # Get user data for the respective user
     def getUserData(update):
         #update = json.loads(update)
-        logger.debug('getUserData(0/2)')
-
-        # May be completely unnecessary, just in case
-        if hasattr(update, 'effective_chat'):
-            # Get users Telegram ID
-            userID=str(update.effective_chat.id)
-            # Add user to userdata in case they did not initially send /start
-            # to prevent AttributeErrors occurring from their key not being
-            # present in the database
-            # (https://github.com/smcclennon/SongID/issues/6#issuecomment-1021517621)
-            if userID not in userdata:
-                SIDProcessor.addUserData(update, '0', '0')
-        logger.debug('getUserData(1/2)')
-
+        logger.debug('getUserData(0/1)')
         data = userdata[f'{update.effective_user.id}']
-        logger.debug('getUserData(2/2)')
+        logger.debug('getUserData(1/1)')
         return data
 
 

@@ -3,12 +3,12 @@ from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, Messa
 import sentry_sdk
 
 
-ver='0.2.4'
+ver='1.0.0-beta1'
 botName=f'SongID'
 botVer=f'{botName} {ver}'
 botAt=f'@SongIDBot'
 botUsername='SongIDbot'
-downloadDIR='data/downloads'
+downloadDIR='downloads'
 
 
 # Initialise the logger and format it's output
@@ -21,18 +21,44 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-#  Load private information regarding the telegram bot
-with open('data/token.json', 'r') as f:
-    all_tokens = json.load(f)
-    telegramConfig = all_tokens["telegram"]
-    token = telegramConfig["token"]
-    devid = telegramConfig["devid"]
-    devusername = telegramConfig["devusername"]
-    heroku_enabled = all_tokens["heroku"]["enabled"]
-    heroku_webhook = all_tokens["heroku"]["webhook"]
-    heroku_listen = all_tokens["heroku"]["listen"]
-    heroku_port = all_tokens["heroku"]["port"]
-    sentry_dsn = all_tokens["sentry"]["dsn"]
+#  Load environment variables
+env = {
+    'sentry_dsn': os.getenv('SONGID_SENTRY_DSN'),
+    'telegram': {
+        'bot_token': os.getenv('SONGID_TELEGRAM_BOT_TOKEN'),
+        'dev_id': os.getenv('SONGID_TELEGRAM_DEV_ID'),
+        'dev_username': os.getenv('SONGID_TELEGRAM_DEV_USERNAME')
+    },
+    'acr': {
+        'clear': {
+            'host': os.getenv('SONGID_ACR_CLEAR_HOST'),
+            'access_key': os.getenv('SONGID_ACR_CLEAR_ACCESS_KEY'),
+            'access_secret': os.getenv('SONGID_ACR_CLEAR_ACCESS_SECRET'),
+            'recognize_type': os.getenv('SONGID_ACR_CLEAR_RECOGNIZE_TYPE'),
+            'timeout': os.getenv('SONGID_ACR_CLEAR_TIMEOUT')
+        },
+        'noisy': {
+            'host': os.getenv('SONGID_ACR_NOISY_HOST'),
+            'access_key': os.getenv('SONGID_ACR_NOISY_ACCESS_KEY'),
+            'access_secret': os.getenv('SONGID_ACR_NOISY_ACCESS_SECRET'),
+            'recognize_type': os.getenv('SONGID_ACR_NOISY_RECOGNIZE_TYPE'),
+            'timeout': os.getenv('SONGID_ACR_NOISY_TIMEOUT')
+        },
+        'hum': {
+            'host': os.getenv('SONGID_ACR_HUM_HOST'),
+            'access_key': os.getenv('SONGID_ACR_HUM_ACCESS_KEY'),
+            'access_secret': os.getenv('SONGID_ACR_HUM_ACCESS_SECRET'),
+            'recognize_type': os.getenv('SONGID_ACR_HUM_RECOGNIZE_TYPE'),
+            'timeout': os.getenv('SONGID_ACR_HUM_TIMEOUT')
+        }
+    }
+}
+
+print(env)
+token = env['telegram']['bot_token']
+devid = env['telegram']['dev_id']
+devusername = env['telegram']['dev_username']
+sentry_dsn = env['sentry_dsn']
 
 sentry_sdk.init(
 dsn=sentry_dsn,

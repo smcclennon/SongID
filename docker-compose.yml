@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  songid:
+    build: .  # Create image with Dockerfile
+    volumes:
+      #- .:/app  # Mount the current directory to /app in the container
+      - songid-data:/app/data  # Use a named volume for the data directory
+    environment:
+      - PYTHONUNBUFFERED=1  # See logs in real-time
+      - SONGID_SENTRY_DSN=${SONGID_SENTRY_DSN}  # Error logging (https://examplePublicKey@o0.ingest.sentry.io/0)
+      - SONGID_TELEGRAM_BOT_TOKEN=${SONGID_TELEGRAM_BOT_TOKEN}
+      - SONGID_TELEGRAM_DEV_ID=${SONGID_TELEGRAM_DEV_ID}  # Developer ID (000000000)
+      - SONGID_TELEGRAM_DEV_USERNAME=${SONGID_TELEGRAM_DEV_USERNAME}  # Developer username (@username)
+
+      - SONGID_ACR_CLEAR_HOST=${SONGID_ACR_CLEAR_HOST}
+      - SONGID_ACR_CLEAR_ACCESS_KEY=${SONGID_ACR_CLEAR_ACCESS_KEY}
+      - SONGID_ACR_CLEAR_ACCESS_SECRET=${SONGID_ACR_CLEAR_ACCESS_SECRET}
+      - SONGID_ACR_CLEAR_TIMEOUT=${SONGID_ACR_CLEAR_TIMEOUT}
+
+      - SONGID_ACR_NOISY_HOST=${SONGID_ACR_NOISY_HOST}
+      - SONGID_ACR_NOISY_ACCESS_KEY=${SONGID_ACR_NOISY_ACCESS_KEY}
+      - SONGID_ACR_NOISY_ACCESS_SECRET=${SONGID_ACR_NOISY_ACCESS_SECRET}
+      - SONGID_ACR_NOISY_TIMEOUT=${SONGID_ACR_NOISY_TIMEOUT}
+
+      - SONGID_ACR_HUM_HOST=${SONGID_ACR_HUM_HOST}
+      - SONGID_ACR_HUM_ACCESS_KEY=${SONGID_ACR_HUM_ACCESS_KEY}
+      - SONGID_ACR_HUM_ACCESS_SECRET=${SONGID_ACR_HUM_ACCESS_SECRET}
+      - SONGID_ACR_HUM_TIMEOUT=${SONGID_ACR_HUM_TIMEOUT}
+
+volumes:
+  songid-data:  # Define the named volume

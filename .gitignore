@@ -1,6 +1,5 @@
 __pycache__
 *.png
 *.psd
-token.json
-userdata.json
-data/downloads
+#userdata.json
+set_env_vars.sh
