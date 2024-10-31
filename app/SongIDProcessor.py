@@ -87,7 +87,7 @@ def fileDownload(update, context):
     except Exception as e:
         botsend(update, context, f'⚠️ Sorry, your file is too big for us to process.\nFile size limit: 20MB')
         logbot(update, '*Sent file-size limit error*')
-        traceback.print_tb(e.__traceback__)
+        logger.exception(e)
         return 'FILE_TOO_BIG'
 
 
