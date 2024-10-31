@@ -84,9 +84,10 @@ def fileDownload(update, context):
             newFile = context.bot.get_file(file_id)
             newFile.download(f'{downloadDIR}/{fileName}')
             return fileName
-    except:
+    except Exception as e:
         botsend(update, context, f'⚠️ Sorry, your file is too big for us to process.\nFile size limit: 20MB')
         logbot(update, '*Sent file-size limit error*')
+        logger.exception(e)
         return 'FILE_TOO_BIG'
 
 
