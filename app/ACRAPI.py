@@ -6,37 +6,33 @@ from SongIDCore import *
 
 
 # Get the ACRCloud config
-with open('data/acrcloud.json', 'r') as f:
-    config = json.load(f)
-    logger.info('Loaded: ACR Config')
-
-
-# Get the ACRCloud access & private keys
-acrkey = all_tokens["acr"]
-
-
-
-
-config_clear = config["clear"]
-config_clear["access_key"] = acrkey["clear"]["access_key"]
-config_clear["access_secret"] = acrkey["clear"]["access_secret"]
-config_clear["recognize_type"] = ACRCloudRecognizeType.ACR_OPT_REC_AUDIO
-config_clear["debug"] = False
-
-
-config_noisy = config["noisy"]
-config_noisy["access_key"] = acrkey["noisy"]["access_key"]
-config_noisy["access_secret"] = acrkey["noisy"]["access_secret"]
-config_noisy["recognize_type"] = ACRCloudRecognizeType.ACR_OPT_REC_AUDIO
-config_noisy["debug"] = False
-
-
-config_hum = config["hum"]
-config_hum["access_key"] = acrkey["hum"]["access_key"]
-config_hum["access_secret"] = acrkey["hum"]["access_secret"]
-config_hum["recognize_type"] = ACRCloudRecognizeType.ACR_OPT_REC_BOTH
-config_hum["debug"] = False
-
+config = {
+    "clear": {
+        "host": env['acr']['clear']['host'],
+        "access_key": env['acr']['clear']['access_key'],
+        "access_secret": env['acr']['clear']['access_secret'],
+        "recognize_type": ACRCloudRecognizeType.ACR_OPT_REC_AUDIO,
+        "debug":  False,
+        "timeout": env['acr']['clear']['timeout']
+    },
+    "noisy": {
+        "host": env['acr']['noisy']['host'],
+        "access_key": env['acr']['noisy']['access_key'],
+        "access_secret": env['acr']['noisy']['access_secret'],
+        "recognize_type": ACRCloudRecognizeType.ACR_OPT_REC_AUDIO,
+        "debug": False,
+        "timeout": env['acr']['noisy']['timeout']
+    },
+    "hum": {
+        "host": env['acr']['hum']['host'],
+        "access_key": env['acr']['hum']['access_key'],
+        "access_secret": env['acr']['hum']['access_secret'],
+        "recognize_type": ACRCloudRecognizeType.ACR_OPT_REC_BOTH,
+        "debug": False,
+        "timeout": env['acr']['hum']['timeout']
+    }
+}
+logger.info('Loaded: ACR Config')
 
 
 # Functions for sending files to the ACRCloud API and getting a response

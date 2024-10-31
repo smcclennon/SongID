@@ -282,15 +282,6 @@ logger.info('Loaded: Handlers')
 
 
 logger.info('Loading Complete!')
-if heroku_enabled == 'True':
-    logger.info('Initialising Heroku webhook...')
-    PORT = int(os.environ.get('PORT', int(heroku_port)))
-    u.start_webhook(listen=heroku_listen,
-                            port=int(PORT),
-                            url_path=token)
-    u.bot.setWebhook(heroku_webhook + token)
-    logger.info('Heroku webhook initialised')
-else:
-    u.start_polling()
-    logger.info('Standard polling initialised')
+u.start_polling()
+logger.info('Standard polling initialised')
 u.idle()
