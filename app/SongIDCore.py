@@ -54,7 +54,6 @@ env = {
     }
 }
 
-print(env)
 token = env['telegram']['bot_token']
 devid = env['telegram']['dev_id']
 devusername = env['telegram']['dev_username']
