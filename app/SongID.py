@@ -8,7 +8,6 @@ from telegram.utils.helpers import mention_html
 import sys, traceback
 from threading import Thread
 import urllib.request  # Check for internet connectivity
-import traceback
 
 
 os.system(f'title _ _  ---====  SongID {ver}  ====---  _ _')  # Set the windows console window title
