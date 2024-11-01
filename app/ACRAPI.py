@@ -13,7 +13,7 @@ config = {
         "access_secret": env['acr']['clear']['access_secret'],
         "recognize_type": ACRCloudRecognizeType.ACR_OPT_REC_AUDIO,
         "debug":  False,
-        "timeout": env['acr']['clear']['timeout']
+        "timeout": int(env['acr']['clear']['timeout'])
     },
     "noisy": {
         "host": env['acr']['noisy']['host'],
@@ -21,7 +21,7 @@ config = {
         "access_secret": env['acr']['noisy']['access_secret'],
         "recognize_type": ACRCloudRecognizeType.ACR_OPT_REC_AUDIO,
         "debug": False,
-        "timeout": env['acr']['noisy']['timeout']
+        "timeout": int(env['acr']['noisy']['timeout'])
     },
     "hum": {
         "host": env['acr']['hum']['host'],
@@ -29,7 +29,7 @@ config = {
         "access_secret": env['acr']['hum']['access_secret'],
         "recognize_type": ACRCloudRecognizeType.ACR_OPT_REC_BOTH,
         "debug": False,
-        "timeout": env['acr']['hum']['timeout']
+        "timeout": int(env['acr']['hum']['timeout'])
     }
 }
 logger.info('Loaded: ACR Config')
