@@ -49,15 +49,18 @@ class ACRAPI():
         '''This module can recognize ACRCloud by most of audio/video file.
             Audio: mp3, wav, m4a, flac, aac, amr, ape, ogg ...
             Video: mp4, mkv, wmv, flv, ts, avi ...'''
-        re = ACRCloudRecognizer(config['noisy'])
+        re_config = config['noisy']
+        re = ACRCloudRecognizer(re_config)
 
         #recognize by file path, and skip 0 seconds from from the beginning of sys.argv[1].
         #re.recognize_by_file(filePath, 0, 10)
-        logger.info('ACR: Processing request...')
+        logger.info('ACR: Processing Noisy request...')
+        logger.debug(re_config)
         buf = open(filePath, 'rb').read()
         #recognize by file_audio_buffer that read from file path, and skip 0 seconds from from the beginning of sys.argv[1].
         data = re.recognize_by_filebuffer(buf, 0, 60)
         data = json.loads(data)
+        logger.debug(data)
         logger.info('ACR: Processing complete!')
         return data
 
@@ -69,14 +72,17 @@ class ACRAPI():
         '''This module can recognize ACRCloud by most of audio/video file.
             Audio: mp3, wav, m4a, flac, aac, amr, ape, ogg ...
             Video: mp4, mkv, wmv, flv, ts, avi ...'''
-        re = ACRCloudRecognizer(config['hum'])
+        re_config = config['hum']
+        re = ACRCloudRecognizer(re_config)
 
         #recognize by file path, and skip 0 seconds from from the beginning of sys.argv[1].
         #re.recognize_by_file(filePath, 0, 10)
-        logger.info('ACR: Processing request...')
+        logger.info('ACR: Processing Hum request...')
+        logger.debug(re_config)
         buf = open(filePath, 'rb').read()
         #recognize by file_audio_buffer that read from file path, and skip 0 seconds from from the beginning of sys.argv[1].
         data = re.recognize_by_filebuffer(buf, 0, 10)
         data = json.loads(data)
+        logger.debug(data)
         logger.info('ACR: Processing complete!')
         return data
