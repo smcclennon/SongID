@@ -2,7 +2,7 @@ import telegram, json, time, os, logging, sentry_sdk
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, MessageQueue
 
 
-ver='1.0.0-beta3'
+ver='1.0.0-beta4'
 botName=f'SongID'
 botVer=f'{botName} {ver}'
 botAt=f'@SongIDBot'
