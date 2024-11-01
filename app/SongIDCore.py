@@ -10,19 +10,10 @@ botUsername='SongIDbot'
 downloadDIR='downloads'
 
 
-# Initialise the logger and format it's output
-import logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    datefmt='%d-%m-%Y %H:%M:%S',
-)
-logger = logging.getLogger(__name__)
-
-
 #  Load environment variables
 env = {
     'sentry_dsn': os.getenv('SONGID_SENTRY_DSN'),
+    'log_level': os.getenv('SONGID_LOG_LEVEL'),
     'telegram': {
         'bot_token': os.getenv('SONGID_TELEGRAM_BOT_TOKEN'),
         'dev_id': os.getenv('SONGID_TELEGRAM_DEV_ID'),
@@ -56,7 +47,31 @@ env = {
 token = env['telegram']['bot_token']
 devid = env['telegram']['dev_id']
 devusername = env['telegram']['dev_username']
+loglevel = env['log_level'].upper()
 sentry_dsn = env['sentry_dsn']
+
+
+# Initialise the logger and format it's output
+if loglevel == 'DEBUG':
+    loglevel = logging.DEBUG
+elif loglevel == 'INFO':
+    loglevel = logging.INFO
+elif loglevel == 'WARNING':
+    loglevel = logging.WARNING
+elif loglevel == 'ERROR':
+    loglevel = logging.ERROR
+else:
+    loglevel = logging.INFO
+    print('Invalid log level specified, defaulting to INFO')
+
+print(f'Initializing logger with log level {loglevel}')
+logging.basicConfig(
+    level=loglevel,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+)
+logger = logging.getLogger(__name__)
+
 
 sentry_sdk.init(
 dsn=sentry_dsn,
