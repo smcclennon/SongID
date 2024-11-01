@@ -12,6 +12,7 @@ downloadDIR='downloads'
 
 #  Load environment variables
 env = {
+    'environment': os.getenv('SONGID_ENVIRONMENT'),
     'sentry_dsn': os.getenv('SONGID_SENTRY_DSN'),
     'log_level': os.getenv('SONGID_LOG_LEVEL'),
     'telegram': {
@@ -76,6 +77,7 @@ logger = logging.getLogger(__name__)
 sentry_sdk.init(
 dsn=sentry_dsn,
 release=ver,
+environment=env['environment'],
 sample_rate=1.0,
 traces_sample_rate=1.0,
 attach_stacktrace=True,
