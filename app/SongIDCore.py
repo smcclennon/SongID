@@ -1,6 +1,5 @@
-import telegram, json, time, os
+import telegram, json, time, os, logging, sentry_sdk
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, MessageQueue
-import sentry_sdk
 
 
 ver='1.0.0-beta3'
