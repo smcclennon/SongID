@@ -10,8 +10,6 @@ from threading import Thread
 import urllib.request  # Check for internet connectivity
 
 
-os.system(f'title _ _  ---====  SongID {ver}  ====---  _ _')  # Set the windows console window title
-
 while True:
     try:
         ACR_PING_CODE = urllib.request.urlopen("https://identify-eu-west-1.acrcloud.com").getcode()
