@@ -18,33 +18,32 @@ def initialise_database():
     cursor = connection.cursor()
 
 
-    # TODO add counter for 
-    
     # Create tables if they do not exist
-    # TODO: Investigate bigint=8bytes, unnecessary for unix timestamp? 
-    # TODO: add delete/constraint to prevent orphan records
     create_users_table = '''
     CREATE TABLE IF NOT EXISTS users (
         user_id SERIAL PRIMARY KEY,
-        username VARCHAR(255) UNIQUE NOT NULL,
+        telegram_user_id INT UNIQUE NOT NULL,
+        username VARCHAR(255) UNIQUE,
         first_name VARCHAR(255) NOT NULL,
         last_name VARCHAR(255),
         blocked_bot BOOLEAN DEFAULT FALSE,
         banned BOOLEAN DEFAULT FALSE,
-        first_added BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::BIGINT,
-        last_updated BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::BIGINT
+        created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
+    CREATE INDEX idx_telegram_user_id ON users(telegram_user_id);
     '''
     
     # Logs each API request made by users, including the endpoint called, the status of the request, and the timestamp.
     create_api_requests_table = '''
     CREATE TABLE IF NOT EXISTS api_requests (
         request_id SERIAL PRIMARY KEY,
-        user_id INT REFERENCES users(user_id),
+        user_id INT REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
         endpoint VARCHAR(255) NOT NULL,
-        status VARCHAR(50) NOT NULL,
-        timestamp BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::BIGINT
+        status_code INT NOT NULL,
+        timestamp TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
+    CREATE INDEX idx_user_id ON api_requests(user_id);
     '''
 
     # Stores music information, including the ISRC code, title, artist, year, and the user who first discovered the music.Stores music information, including the ISRC code, title, artist, year, and the user who first discovered the music.
@@ -56,16 +55,17 @@ def initialise_database():
         title VARCHAR(255) NOT NULL,
         artist VARCHAR(255) NOT NULL,
         year INT,
-        request_id INT REFERENCES api_requests(request_id)
+        request_id INT REFERENCES api_requests(request_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
+    CREATE INDEX idx_isrc ON music(isrc);
     '''
 
     # Create the identifications table to link successful API requests with music ISRC
     create_identifications_table = '''
     CREATE TABLE IF NOT EXISTS identifications (
         identification_id SERIAL PRIMARY KEY,
-        request_id INT REFERENCES api_requests(request_id),
-        music_id SERIAL REFERENCES music(music_id)
+        request_id INT REFERENCES api_requests(request_id) ON DELETE CASCADE ON UPDATE CASCADE,
+        music_id INT REFERENCES music(music_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
     '''
     
@@ -93,7 +93,7 @@ def add_user(user_id, username, first_name, last_name):
     try:
         cursor.execute(
             '''
-            INSERT INTO users (user_id, username, first_name, last_name)
+            INSERT INTO users (telegram_user_id, username, first_name, last_name)
             VALUES (%s, %s, %s, %s)
             ON CONFLICT (user_id) DO NOTHING;  -- Prevents duplicate entries
             ''',
