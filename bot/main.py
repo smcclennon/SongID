@@ -2,7 +2,7 @@
 # Main entry point for the bot. App flow + global error handling
 
 
-import logging
+import logging, tracemalloc
 from utils import setup_logging
 from telegram import Update
 from telegram.ext import Application
@@ -17,6 +17,7 @@ from database import initialise_database
 def main():
     '''Start the bot.'''
     print(f'_ _  ---====  SongID {VERSION}  ====---  _ _')
+    tracemalloc.start()  # Start tracing memory allocations
     setup_logging(debug=DEBUG)
     logger = logging.getLogger(__name__)
     initialise_database()
