@@ -1,9 +1,8 @@
-import telegram, json, time, os
+import telegram, json, time, os, logging, sentry_sdk
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, MessageQueue
-import sentry_sdk
 
 
-ver='1.0.0-beta3'
+ver='1.0.0'
 botName=f'SongID'
 botVer=f'{botName} {ver}'
 botAt=f'@SongIDBot'
@@ -11,19 +10,11 @@ botUsername='SongIDbot'
 downloadDIR='downloads'
 
 
-# Initialise the logger and format it's output
-import logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    datefmt='%d-%m-%Y %H:%M:%S',
-)
-logger = logging.getLogger(__name__)
-
-
 #  Load environment variables
 env = {
+    'environment': os.getenv('SONGID_ENVIRONMENT', 'undefined'),
     'sentry_dsn': os.getenv('SONGID_SENTRY_DSN'),
+    'log_level': os.getenv('SONGID_LOG_LEVEL'),
     'telegram': {
         'bot_token': os.getenv('SONGID_TELEGRAM_BOT_TOKEN'),
         'dev_id': os.getenv('SONGID_TELEGRAM_DEV_ID'),
@@ -57,16 +48,41 @@ env = {
 token = env['telegram']['bot_token']
 devid = env['telegram']['dev_id']
 devusername = env['telegram']['dev_username']
+loglevel = env['log_level'].upper()
 sentry_dsn = env['sentry_dsn']
 
-sentry_sdk.init(
-dsn=sentry_dsn,
-release=ver,
-sample_rate=1.0,
-traces_sample_rate=1.0,
-attach_stacktrace=True,
-with_locals=True
+
+# Initialise the logger and format it's output
+if loglevel == 'DEBUG':
+    loglevel = logging.DEBUG
+elif loglevel == 'INFO':
+    loglevel = logging.INFO
+elif loglevel == 'WARNING':
+    loglevel = logging.WARNING
+elif loglevel == 'ERROR':
+    loglevel = logging.ERROR
+else:
+    loglevel = logging.INFO
+    print('Invalid log level specified, defaulting to INFO')
+
+print(f'Initializing logger with log level {loglevel}')
+logging.basicConfig(
+    level=loglevel,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
 )
+logger = logging.getLogger(__name__)
+
+if env['environment'] != 'development':
+    sentry_sdk.init(
+    dsn=sentry_dsn,
+    release=ver,
+    environment=env['environment'],
+    sample_rate=1.0,
+    traces_sample_rate=1.0,
+    attach_stacktrace=True,
+    with_locals=True
+    )
 
 
 # Load data/userdata.json into the variable 'userdata'

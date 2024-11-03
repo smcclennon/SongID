@@ -10,8 +10,6 @@ from threading import Thread
 import urllib.request  # Check for internet connectivity
 
 
-os.system(f'title _ _  ---====  SongID {ver}  ====---  _ _')  # Set the windows console window title
-
 while True:
     try:
         ACR_PING_CODE = urllib.request.urlopen("https://identify-eu-west-1.acrcloud.com").getcode()
@@ -128,10 +126,7 @@ def sendMsg(update, context):
 # (When the user adds a telegram bot, they are forced to send '/start')
 def startCMD(update, context):
     logusr(update)
-    userID=str(update.effective_chat.id)
-    username=str(update.effective_chat.username)
-    if userID not in userdata:
-        SIDProcessor.addUserData(update, '0', '0')
+    SIDProcessor.addUserIfNotExists(update)
     botsend(update, context, f'''<b>{botName}</b> is a Telegram bot that can identify music, similar to Shazam
 
 Key Features:
@@ -195,6 +190,7 @@ def invalidFiletype(update, context):
 # Send the user the data we have saved on them when they send '/mydata'
 def mydataCMD(update, context):
     logusr(update)
+    SIDProcessor.addUserIfNotExists(update)
     data=SIDProcessor.getUserData(update)
     user = update.effective_chat.id
     username = data["username"]
@@ -224,15 +220,18 @@ def maintenanceINFO(update, context):
 
 
 def noisyProcess(update, context):
+    SIDProcessor.addUserIfNotExists(update)
     SIDProcessor.fileProcess(update, context, 'noisy')
 
 
 # Currently not in use
 def clearProcess(update, context):
+    SIDProcessor.addUserIfNotExists(update)
     SIDProcessor.fileProcess(update, context, 'clear')
 
 
 def humProcess(update, context):
+    SIDProcessor.addUserIfNotExists(update)
     SIDProcessor.fileProcess(update, context, 'hum')
 
 maintenance = 0

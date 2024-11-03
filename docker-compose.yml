@@ -8,7 +8,9 @@ services:
       - songid-data:/app/data  # Use a named volume for the data directory
     environment:
       - PYTHONUNBUFFERED=1  # See logs in real-time
-      - SONGID_SENTRY_DSN=${SONGID_SENTRY_DSN}  # Error logging (https://examplePublicKey@o0.ingest.sentry.io/0)
+      - SONGID_LOG_LEVEL=${SONGID_LOG_LEVEL}  # DEBUG, INFO, WARNING, ERROR
+      - SONGID_ENVIRONMENT=${SONGID_ENVIRONMENT}  # production, staging, development
+      - SONGID_SENTRY_DSN=${SONGID_SENTRY_DSN}  # Remote error logging (https://examplePublicKey@o0.ingest.sentry.io/0)
       - SONGID_TELEGRAM_BOT_TOKEN=${SONGID_TELEGRAM_BOT_TOKEN}
       - SONGID_TELEGRAM_DEV_ID=${SONGID_TELEGRAM_DEV_ID}  # Developer ID (000000000)
       - SONGID_TELEGRAM_DEV_USERNAME=${SONGID_TELEGRAM_DEV_USERNAME}  # Developer username (@username)

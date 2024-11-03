@@ -210,6 +210,13 @@ Tips for a higher chance of matching:
 
 class SIDProcessor():
 
+    def addUserIfNotExists(update):
+        userID=str(update.effective_chat.id)
+        username=str(update.effective_chat.username)
+        if userID not in userdata:
+            logger.info(f'User does not exist: {update.effective_user.id}')
+            SIDProcessor.addUserData(update, '0', '0')
+
     # Add user data to the 'userdata' variable and save it to disk
     def addUserData(update, apiCalls, lastCall):
         userdata[f'{update.effective_user.id}'] = {'username': f'{update.effective_chat.username}', 'name': f'{update.effective_user.first_name} {update.effective_user.last_name}', 'api_calls': f'{apiCalls}', 'last_call': f'{lastCall}'}
