@@ -12,6 +12,7 @@ def get_connection():
     return psycopg2.connect(DB_URL)
 
 
+# TODO: Remove 'DEFAULT' from TIMESTAMP WITHHOUT TIME ZONE?
 def initialise_database():
     logger.info('Initialising database...')
     connection = get_connection()
