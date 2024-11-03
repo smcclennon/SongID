@@ -6,7 +6,7 @@ import logging
 from utils import setup_logging
 from telegram import Update
 from telegram.ext import Application
-from config import BOT_TOKEN, DEBUG
+from config import BOT_TOKEN, DEBUG, VERSION
 from handlers import setup_handlers
 from database import initialise_database
 
@@ -16,6 +16,7 @@ from database import initialise_database
 
 def main():
     '''Start the bot.'''
+    print(f'_ _  ---====  SongID {VERSION}  ====---  _ _')
     setup_logging(debug=DEBUG)
     logger = logging.getLogger(__name__)
     initialise_database()
