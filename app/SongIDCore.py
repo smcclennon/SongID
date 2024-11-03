@@ -2,7 +2,7 @@ import telegram, json, time, os, logging, sentry_sdk
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, MessageQueue
 
 
-ver='1.0.0'
+ver='1.0.1'
 botName=f'SongID'
 botVer=f'{botName} {ver}'
 botAt=f'@SongIDBot'
@@ -77,11 +77,7 @@ if env['environment'] != 'development':
     sentry_sdk.init(
     dsn=sentry_dsn,
     release=ver,
-    environment=env['environment'],
-    sample_rate=1.0,
-    traces_sample_rate=1.0,
-    attach_stacktrace=True,
-    with_locals=True
+    environment=env['environment']
     )
 
 
