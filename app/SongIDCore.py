@@ -2,7 +2,7 @@ import telegram, json, time, os, logging, sentry_sdk
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, MessageQueue
 
 
-ver='1.0.0-beta4'
+ver='1.0.0-beta5'
 botName=f'SongID'
 botVer=f'{botName} {ver}'
 botAt=f'@SongIDBot'
@@ -12,7 +12,7 @@ downloadDIR='downloads'
 
 #  Load environment variables
 env = {
-    'environment': os.getenv('SONGID_ENVIRONMENT'),
+    'environment': os.getenv('SONGID_ENVIRONMENT', 'undefined'),
     'sentry_dsn': os.getenv('SONGID_SENTRY_DSN'),
     'log_level': os.getenv('SONGID_LOG_LEVEL'),
     'telegram': {
@@ -73,16 +73,16 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
-sentry_sdk.init(
-dsn=sentry_dsn,
-release=ver,
-environment=env['environment'],
-sample_rate=1.0,
-traces_sample_rate=1.0,
-attach_stacktrace=True,
-with_locals=True
-)
+if env['environment'] != 'development':
+    sentry_sdk.init(
+    dsn=sentry_dsn,
+    release=ver,
+    environment=env['environment'],
+    sample_rate=1.0,
+    traces_sample_rate=1.0,
+    attach_stacktrace=True,
+    with_locals=True
+    )
 
 
 # Load data/userdata.json into the variable 'userdata'
