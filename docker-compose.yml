@@ -1,34 +1,42 @@
 version: '3.8'
 
+
 services:
-  songid:
+  bot:
     build: .  # Create image with Dockerfile
-    volumes:
-      #- .:/app  # Mount the current directory to /app in the container
-      - songid-data:/app/data  # Use a named volume for the data directory
     environment:
       - PYTHONUNBUFFERED=1  # See logs in real-time
-      - SONGID_LOG_LEVEL=${SONGID_LOG_LEVEL}  # DEBUG, INFO, WARNING, ERROR
-      - SONGID_ENVIRONMENT=${SONGID_ENVIRONMENT}  # production, staging, development
-      - SONGID_SENTRY_DSN=${SONGID_SENTRY_DSN}  # Remote error logging (https://examplePublicKey@o0.ingest.sentry.io/0)
-      - SONGID_TELEGRAM_BOT_TOKEN=${SONGID_TELEGRAM_BOT_TOKEN}
-      - SONGID_TELEGRAM_DEV_ID=${SONGID_TELEGRAM_DEV_ID}  # Developer ID (000000000)
-      - SONGID_TELEGRAM_DEV_USERNAME=${SONGID_TELEGRAM_DEV_USERNAME}  # Developer username (@username)
+      - DEBUG=${DEBUG}  # true, false
+      - ENVIRONMENT=${ENVIRONMENT}  # production, staging, development
+      - SENTRY_DSN=${SENTRY_DSN}  # Remote error logging (https://examplePublicKey@o0.ingest.sentry.io/0)
+      - BOT_TOKEN=${BOT_TOKEN}
+      - DEVELOPER_CHAT_ID=${DEVELOPER_CHAT_ID}
+      - DB_USER=songid_user
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=songid_db
+      - DB_HOST=host.docker.internal
+      - DB_PORT=5432
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: on-failure
 
-      - SONGID_ACR_CLEAR_HOST=${SONGID_ACR_CLEAR_HOST}
-      - SONGID_ACR_CLEAR_ACCESS_KEY=${SONGID_ACR_CLEAR_ACCESS_KEY}
-      - SONGID_ACR_CLEAR_ACCESS_SECRET=${SONGID_ACR_CLEAR_ACCESS_SECRET}
-      - SONGID_ACR_CLEAR_TIMEOUT=${SONGID_ACR_CLEAR_TIMEOUT}
-
-      - SONGID_ACR_NOISY_HOST=${SONGID_ACR_NOISY_HOST}
-      - SONGID_ACR_NOISY_ACCESS_KEY=${SONGID_ACR_NOISY_ACCESS_KEY}
-      - SONGID_ACR_NOISY_ACCESS_SECRET=${SONGID_ACR_NOISY_ACCESS_SECRET}
-      - SONGID_ACR_NOISY_TIMEOUT=${SONGID_ACR_NOISY_TIMEOUT}
-
-      - SONGID_ACR_HUM_HOST=${SONGID_ACR_HUM_HOST}
-      - SONGID_ACR_HUM_ACCESS_KEY=${SONGID_ACR_HUM_ACCESS_KEY}
-      - SONGID_ACR_HUM_ACCESS_SECRET=${SONGID_ACR_HUM_ACCESS_SECRET}
-      - SONGID_ACR_HUM_TIMEOUT=${SONGID_ACR_HUM_TIMEOUT}
+  db:
+    image: postgres:16.4
+    environment:
+      - POSTGRES_USER=songid_user
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=songid_db
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data:Z  # Store database data in a named volume
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -d songid_db -U songid_user'"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: on-failure
 
 volumes:
-  songid-data:  # Define the named volume
+  postgres_data:
