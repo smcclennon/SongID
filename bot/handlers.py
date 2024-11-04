@@ -2,12 +2,12 @@
 # Handle different types of updates (messages, commands, etc.) + catch errors
 
 
-import logging, html, json, traceback
+import logging, os, html, json, traceback
 from telegram import ForceReply, Update
 from telegram.constants import ParseMode
 from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters
 from database import add_user
-from config import DEVELOPER_CHAT_ID
+from config import DEVELOPER_CHAT_ID, DOWNLOAD_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +68,40 @@ async def chat_id_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 async def crash_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     x = 1 / 0
 
+async def unsupported_file(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text('Unsupported file type. Please send only music or video files.')
+
+async def download_file(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    # Create a directory for downloads if it doesn't exist
+    if not os.path.exists(DOWNLOAD_DIR):
+        os.makedirs(DOWNLOAD_DIR)
+    file = update.message.audio or update.message.video or update.message.document or update.message.voice or update.message.video_note
+    if file:
+        # Check if the file size exceeds 20MB
+        file_size = file.file_size
+        if file_size > 20 * 1024 * 1024:
+            await update.message.reply_text('This file exceeds Telegram\'s 20MB download limit for bots and cannot be downloaded. Please send a smaller file.')
+
+        # File can be downloaded
+        else:
+            # Prepare to download file
+            file_id = file.file_id
+            new_file = await context.bot.get_file(file_id)
+            file_name = update.effective_message.id  # Unique message ID
+            file_path = os.path.join(DOWNLOAD_DIR, str(file_name))
+
+            # Download file
+            await new_file.download_to_drive(file_path)
+            await update.message.reply_text(f'Downloaded: {file_name}')
+
+            # TODO: Do things with file, call utils.processmusic() here etc
+
+            # Delete the file after use
+            os.remove(file_path)
+    else:
+        await unsupported_file(update, context)
+        raise(f'File missing expected attribute. Captured by filter but not handled correctly. To fix, add handling functionality for this update type or adjust filter to avoid future capture. Check update.message')
+
 
 def setup_handlers(application: Application) -> None:
     '''Set up command and message handlers.'''
@@ -76,5 +110,7 @@ def setup_handlers(application: Application) -> None:
     application.add_handler(CommandHandler('help', help_command))
     application.add_handler(CommandHandler('chatid', chat_id_command))
     application.add_handler(CommandHandler('crash', crash_command))
+    application.add_handler(MessageHandler(filters.AUDIO | filters.VIDEO | filters.Document.AUDIO | filters.Document.VIDEO | filters.VOICE | filters.VIDEO_NOTE, download_file))
+    application.add_handler(MessageHandler(filters.PHOTO | filters.Document.ALL, unsupported_file))  # Handle unsupported documents
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
     logger.info('Handlers have been set up.')

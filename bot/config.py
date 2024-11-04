@@ -12,6 +12,7 @@ VERSION = '2.0.0-dev'
 
 BOT_TOKEN         = env('BOT_TOKEN')
 DEVELOPER_CHAT_ID = env('DEVELOPER_CHAT_ID')
+DOWNLOAD_DIR      = env('DOWNLOAD_DIR', default='downloads')
 
 SENTRY_DSN        = env('SENTRY_DSN')
 ENVIRONMENT       = env('ENVIRONMENT', default='undefined').lower()
