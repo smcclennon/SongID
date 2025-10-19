@@ -23,6 +23,6 @@ Read the blog post on how I created SongID on the [ACRCloud blog](https://blog.a
 
 Also featured on [Telegram Channels](https://telegramchannels.me/bots/songidbot) and [BotoStore](https://botostore.com/c/songidbot/)
 ## Screenshots
-<img src="https://smcclennon.github.io/assets/images/screenshots/SongID/voice.png" alt="Send Voice Message" width="100%"></img><img src="https://smcclennon.github.io/assets/images/screenshots/SongID/video.png" alt="Send Video" width="100%"></img>
+<img src="https://smcclennon-img.netlify.app/projects/SongID/voice.png" alt="Send Voice Message" width="100%"></img><img src="https://smcclennon-img.netlify.app/projects/SongID/video.png" alt="Send Video" width="100%"></img>
 
 *Written in Python 3.8 on Windows 10*
